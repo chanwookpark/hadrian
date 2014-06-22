@@ -33,15 +33,6 @@ public class SampleApiSpecTests {
     RestTemplate springTemplate;
 
     @Test
-    public void loadWebServiceBean() throws Exception {
-        try {
-            Sample1 v = spec.get();
-            fail();
-        } catch (UnsupportedOperationException e) {
-        }
-    }
-
-    @Test
     public void testNotAssignedMethod() throws Exception {
         try {
             spec.notAssigned();
