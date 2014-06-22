@@ -4,8 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import restclient.config.XmlConfigurationApiHostMapFactory;
-import restclient.operation.ProxySupportWebServiceBeanFactory;
-import restclient.operation.WebServiceEnrollBeanFactoryPostProcessor;
+import restclient.config.ProxySupportWebServiceBeanFactory;
+import restclient.config.WebServiceEnrollBeanFactoryPostProcessor;
 
 /**
  * Created by chanwook on 2014. 6. 19..

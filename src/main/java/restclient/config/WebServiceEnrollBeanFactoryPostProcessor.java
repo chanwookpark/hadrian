@@ -1,4 +1,4 @@
-package restclient.operation;
+package restclient.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,13 +8,12 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AssignableTypeFilter;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 import restclient.ApiConfigInitializingException;
-import restclient.config.ApiHostMapFactory;
+import restclient.meta.WebService;
 import restclient.model.ApiHostMap;
 import restclient.model.WebServiceBean;
-import restclient.model.WebServiceOperationSpec;
 
 import java.util.Set;
 
@@ -51,8 +50,7 @@ public class WebServiceEnrollBeanFactoryPostProcessor implements BeanFactoryPost
                         return true;
                     }
                 };
-        AssignableTypeFilter interfaceNameFilter = new AssignableTypeFilter(WebServiceOperationSpec.class);
-        scanner.addIncludeFilter(interfaceNameFilter);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(WebService.class, true, true));
 
         return scanner.findCandidateComponents(basePackage);
     }
@@ -67,7 +65,7 @@ public class WebServiceEnrollBeanFactoryPostProcessor implements BeanFactoryPost
         }
 
         for (BeanDefinition bd : candidateComponents) {
-            if (!isExistBean(beanFactory, bd) && isValidType(bd.getBeanClassName())) {
+            if (!isExistBean(beanFactory, bd)) {
                 Class<?> spec = loadWebServiceSpecClass(beanFactory, bd);
                 String beanName = bd.getBeanClassName();
                 WebServiceBean bean = webServiceBeanFactory.createBean(spec, apiHostMap);
@@ -78,16 +76,6 @@ public class WebServiceEnrollBeanFactoryPostProcessor implements BeanFactoryPost
                 beanFactory.registerSingleton(beanName, bean);
             }
         }
-    }
-
-    protected boolean isValidType(String beanClassName) {
-        if (WebServiceOperationSpec.class.getName().equals(beanClassName)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("WebServiceOperationSpec는 빈으로 등록하지 않습니다.");
-            }
-            return false;
-        }
-        return true;
     }
 
     private Class<?> loadWebServiceSpecClass(ConfigurableListableBeanFactory beanFactory, BeanDefinition bd) {

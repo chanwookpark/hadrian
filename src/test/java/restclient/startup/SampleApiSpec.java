@@ -2,13 +2,12 @@ package restclient.startup;
 
 import restclient.meta.GET;
 import restclient.meta.WebService;
-import restclient.model.WebServiceOperationSpec;
 
 /**
  * Created by chanwook on 2014. 6. 18..
  */
 @WebService(key = "sample")
-public interface SampleApiSpec extends WebServiceOperationSpec {
+public interface SampleApiSpec {
 
     @GET(url = "/sample")
     Sample1 get();

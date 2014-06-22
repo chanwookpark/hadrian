@@ -1,4 +1,4 @@
-package restclient.operation;
+package restclient.config;
 
 import restclient.model.ApiHostMap;
 import restclient.model.WebServiceBean;

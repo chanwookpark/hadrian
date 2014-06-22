@@ -1,4 +1,4 @@
-package restclient.operation;
+package restclient.config;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.web.client.RestTemplate;
@@ -7,6 +7,8 @@ import restclient.model.ApiHost;
 import restclient.model.ApiHostMap;
 import restclient.model.SimpleWebServiceBean;
 import restclient.model.WebServiceBean;
+import restclient.operation.WebServiceBeanMethodInterceptor;
+import restclient.operation.WebServiceTemplate;
 
 /**
  * JDK Dynamic Proxy 기반 웹서비스 빈 생성 지원
