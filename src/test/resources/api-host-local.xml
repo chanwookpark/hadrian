@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<apiHostMap>
+    <apiHost key="sample" host="localhost" port="9090" contextRoot="sample"/>
+    <apiHost key="test" host="localhost" port="9090" contextRoot="test"/>
+</apiHostMap>
