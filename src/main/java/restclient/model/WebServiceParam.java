@@ -3,17 +3,25 @@ package restclient.model;
 import restclient.meta.HttpMethod;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Created by chanwook on 2014. 6. 21..
  */
 public class WebServiceParam implements Serializable {
 
+    private String javaMethodName;
+
     private String url;
     private HttpMethod method;
     private Object[] arguments;
     private Class<?> returnType;
     private String hostUrl;
+    private Map<String, String> namedPathMap;
+
+    public WebServiceParam(String name) {
+        this.javaMethodName = name;
+    }
 
     public void url(String url) {
         this.url = url;
@@ -53,5 +61,21 @@ public class WebServiceParam implements Serializable {
 
     public String getHostUrl() {
         return hostUrl;
+    }
+
+    public String getJavaMethodName() {
+        return javaMethodName;
+    }
+
+    public void setJavaMethodName(String javaMethodName) {
+        this.javaMethodName = javaMethodName;
+    }
+
+    public void namedPathMap(Map<String, String> namedPathMap) {
+        this.namedPathMap = namedPathMap;
+    }
+
+    public Map<String, String> getNamedPathMap() {
+        return namedPathMap;
     }
 }

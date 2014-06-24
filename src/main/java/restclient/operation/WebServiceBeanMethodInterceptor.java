@@ -23,7 +23,7 @@ public class WebServiceBeanMethodInterceptor implements MethodInterceptor {
 
         if (invocation.getThis() instanceof WebServiceBean) {
             WebServiceBean wsb = (WebServiceBean) invocation.getThis();
-            WebServiceParam param = new WebServiceParam();
+            WebServiceParam param = new WebServiceParam(invocation.getMethod().getName());
 
             for (Annotation a : invocation.getMethod().getDeclaredAnnotations()) {
                 if (a.annotationType().equals(GET.class)) {

@@ -38,8 +38,7 @@ public class WebServiceTemplate {
 
         String apiUrl = createApiUrl(param);
         org.springframework.http.HttpMethod method = convertSpringMethod(param.getMethod());
-        Map<String, Object> pathParam = createPathParam(param.getUrl(), param.getArguments());
-
+        Map<String, Object> pathParam = createPathParam(param.getUrl(), param.getArguments(), param.getNamedPathMap());
 
         if (logger.isDebugEnabled()) {
             logger.debug("===============================================================================");
@@ -53,25 +52,32 @@ public class WebServiceTemplate {
         return responseEntity.getBody();
     }
 
-    protected Map<String, Object> createPathParam(String url, Object[] arguments) {
+    protected Map<String, Object> createPathParam(String url, Object[] arguments, Map<String, String> namedPathMap) {
         Map<String, Object> pathParam = new HashMap<String, Object>();
         String[] vars = url.split("/");
         for (String v : vars) {
             if (v.startsWith("{") && v.endsWith("}")) {
-                String index = v.replace("{", "").replace("}", "");
-                if (!Pattern.matches("\\d", index)) {
-                    throw new IllegalArgumentException("API Path Variable 매핑을 위해서는 반드시 숫자값을 사용해야 합니다(요청값: " + index + ")");
-                } //숫자만 허용
-
-                if ("0".equals(index)) {
-                    throw new IllegalArgumentException("Path Variable의 index는 1부터 시작으로 '0' 값을 줄 수 없습니다!");
+                String key = v.replace("{", "").replace("}", "");
+                if (Pattern.matches("\\d", key)) {
+                    int index = Integer.parseInt(key);
+                    if (0 == index) {
+                        throw new IllegalArgumentException("Path Variable의 index는 1부터 시작으로 '0' 값을 줄 수 없습니다!");
+                    } else if (index > arguments.length) {
+                        throw new IllegalArgumentException(key + "에 해당하는 순번의 파라미터 인자 값이 전달되지 않았습니다!(index: " + key + ", 파라미터 크기: " + arguments.length + ")");
+                    }
+                    Object value = arguments[index - 1];
+                    pathParam.put(key, value);
+                } else/* named path 지원 */ {
+                    if (namedPathMap.containsKey(key)) {
+                        int paramIndex = Integer.parseInt(namedPathMap.get(key));
+                        if (paramIndex > arguments.length) {
+                            throw new IllegalArgumentException(key + "에 해당하는 순번의 파라미터 인자 값이 전달되지 않았습니다!(key: " + key + ", index: " + paramIndex + ", 파라미터 크기: " + arguments.length + ")");
+                        }
+                        pathParam.put(key, arguments[paramIndex - 1]);
+                    } else {
+                        throw new IllegalArgumentException(key + "에 해당하는 Named Path 값이 없습니다. @Path 애노테이션을 적절히 사용했는지 확인하세요!");
+                    }
                 }
-
-                if ((Integer.parseInt(index)) > (arguments.length)) {
-                    throw new IllegalArgumentException(index + "에 해당하는 순번의 파라미터 인자 값이 전달되지 않았습니다!(index: " + index + ", 파라미터 크기: " + arguments.length + ")");
-                }
-                Object value = arguments[Integer.parseInt(index) - 1];
-                pathParam.put(index, value);
             }
         }
         return pathParam;

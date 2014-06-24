@@ -9,7 +9,6 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.util.ClassUtils;
 import restclient.ApiConfigInitializingException;
 import restclient.meta.WebService;
 import restclient.model.ApiHostMap;
@@ -80,7 +79,8 @@ public class WebServiceEnrollBeanFactoryPostProcessor implements BeanFactoryPost
 
     private Class<?> loadWebServiceSpecClass(ConfigurableListableBeanFactory beanFactory, BeanDefinition bd) {
         try {
-            Class<?> interfaceClass = ClassUtils.forName(bd.getBeanClassName(), beanFactory.getBeanClassLoader());
+//            Class<?> interfaceClass = ClassUtils.forName(bd.getBeanClassName(), null);
+            Class<?> interfaceClass = Class.forName(bd.getBeanClassName(), true, beanFactory.getBeanClassLoader());
             return interfaceClass;
         } catch (ClassNotFoundException e) {
             throw new ApiConfigInitializingException("웹서비스 인터페이스의 클래스 로딩 중 에러가 발생했습니다.", e);

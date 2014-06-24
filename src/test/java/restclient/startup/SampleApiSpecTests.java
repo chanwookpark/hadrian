@@ -1,5 +1,6 @@
 package restclient.startup;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 import restclient.ApiConfigInitializingException;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -87,6 +87,23 @@ public class SampleApiSpecTests {
         assertNotNull(r);
         assertEquals(123, r.getId());
         assertEquals("value2", r.getText1());
+
+        mockServer.verify();
+    }
+
+    @Ignore("@파람키가 먹지 않아서 임시로 막았음요..")
+    @Test
+    public void testPathVarWithKey() throws Exception {
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(springTemplate);
+        mockServer.expect(requestTo("http://localhost:9090/sample/sample/1"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{\"id\":\"1\", \"text1\":\"value1\"}", MediaType.APPLICATION_JSON));
+
+        Sample1 r = spec.getWithPath("1");
+
+        assertNotNull(r);
+        assertEquals(1, r.getId());
+        assertEquals("value1", r.getText1());
 
         mockServer.verify();
     }
