@@ -1,27 +1,28 @@
 package restclient.model;
 
-import restclient.operation.WebServiceTemplate;
+import restclient.operation.ApiTemplate;
 
 /**
  * Created by chanwook on 2014. 6. 19..
  */
 public class SimpleWebServiceBean implements WebServiceBean {
 
-    private final WebServiceTemplate template;
+    private final ApiTemplate template;
 
     private final ApiHost host;
 
     private ApiSpecificationMeta apiSpecificationMeta;
 
-    public SimpleWebServiceBean(WebServiceTemplate template, ApiHost host) {
+    public SimpleWebServiceBean(ApiTemplate template, ApiHost host) {
         this.template = template;
         this.host = host;
     }
 
     @Override
-    public Object execute(WebServiceParam param) {
+    public Object execute(ApiParam param) {
         param.hostUrl(host.getHostUrl());
         param.namedPathMap(apiSpecificationMeta.getNamedPathMap(param.getJavaMethodName()));
+        param.setEntity(apiSpecificationMeta.getEntityMap().get(param.getJavaMethodName()));
 
         Object result = template.execute(param);
         return result;
@@ -31,7 +32,7 @@ public class SimpleWebServiceBean implements WebServiceBean {
         return host;
     }
 
-    public WebServiceTemplate getTemplate() {
+    public ApiTemplate getTemplate() {
         return template;
     }
 

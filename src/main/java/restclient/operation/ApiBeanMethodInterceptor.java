@@ -4,15 +4,17 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import restclient.meta.GET;
 import restclient.meta.HttpMethod;
+import restclient.meta.POST;
+import restclient.model.ApiParam;
 import restclient.model.WebServiceBean;
-import restclient.model.WebServiceParam;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * Created by chanwook on 2014. 6. 19..
  */
-public class WebServiceBeanMethodInterceptor implements MethodInterceptor {
+public class ApiBeanMethodInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -23,15 +25,9 @@ public class WebServiceBeanMethodInterceptor implements MethodInterceptor {
 
         if (invocation.getThis() instanceof WebServiceBean) {
             WebServiceBean wsb = (WebServiceBean) invocation.getThis();
-            WebServiceParam param = new WebServiceParam(invocation.getMethod().getName());
+            ApiParam param = new ApiParam(invocation.getMethod().getName());
 
-            for (Annotation a : invocation.getMethod().getDeclaredAnnotations()) {
-                if (a.annotationType().equals(GET.class)) {
-                    GET get = (GET) a;
-                    param.url(get.url());
-                    param.method(HttpMethod.GET);
-                }
-            }
+            resolveHttpMethod(param, invocation.getMethod());
 
             param.arguments(invocation.getArguments());
 
@@ -42,7 +38,21 @@ public class WebServiceBeanMethodInterceptor implements MethodInterceptor {
             return response;
         }
 
-        throw new UnsupportedOperationException();
+        return invocation.proceed();
+    }
+
+    private void resolveHttpMethod(ApiParam param, Method method) {
+        for (Annotation a : method.getDeclaredAnnotations()) {
+            if (a instanceof GET) {
+                GET get = (GET) a;
+                param.url(get.url());
+                param.method(HttpMethod.GET);
+            } else if (a instanceof POST) {
+                POST post = (POST) a;
+                param.url(post.url());
+                param.method(HttpMethod.POST);
+            }
+        }
     }
 
     private boolean isJavaObjectOperation(String methodName) {

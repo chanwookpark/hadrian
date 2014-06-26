@@ -6,7 +6,7 @@ import restclient.model.WebServiceBean;
 /**
  * Created by chanwook on 2014. 6. 19..
  */
-public interface WebServiceBeanFactory {
+public interface ApiBeanFactory {
 
     WebServiceBean createBean(Class<?> spec, ApiHostMap apiHostMap);
 }

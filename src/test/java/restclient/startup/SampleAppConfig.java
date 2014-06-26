@@ -3,9 +3,9 @@ package restclient.startup;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import restclient.config.ApiConfigurationBeanFactoryPostProcessor;
 import restclient.config.XmlConfigurationApiHostMapFactory;
 import restclient.config.ProxySupportWebServiceBeanFactory;
-import restclient.config.WebServiceEnrollBeanFactoryPostProcessor;
 
 /**
  * Created by chanwook on 2014. 6. 19..
@@ -14,9 +14,9 @@ import restclient.config.WebServiceEnrollBeanFactoryPostProcessor;
 public class SampleAppConfig {
 
     @Bean
-    public WebServiceEnrollBeanFactoryPostProcessor getInitBeanFactoryProstProcessor() {
-        WebServiceEnrollBeanFactoryPostProcessor bfpp = new WebServiceEnrollBeanFactoryPostProcessor();
-        bfpp.setWebServiceBeanFactory(createWebServiceBeanFactory());
+    public ApiConfigurationBeanFactoryPostProcessor getInitBeanFactoryProstProcessor() {
+        ApiConfigurationBeanFactoryPostProcessor bfpp = new ApiConfigurationBeanFactoryPostProcessor();
+        bfpp.setApiBeanFactory(createWebServiceBeanFactory());
         bfpp.setBasePackage("restclient");
         bfpp.setHostMapFactory(createHostMapFactory());
         return bfpp;

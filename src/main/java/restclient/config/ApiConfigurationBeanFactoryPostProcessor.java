@@ -19,11 +19,11 @@ import java.util.Set;
 /**
  * Created by chanwook on 2014. 6. 19..
  */
-public class WebServiceEnrollBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+public class ApiConfigurationBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
-    private final Logger logger = LoggerFactory.getLogger(WebServiceEnrollBeanFactoryPostProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(ApiConfigurationBeanFactoryPostProcessor.class);
 
-    private WebServiceBeanFactory webServiceBeanFactory;
+    private ApiBeanFactory ApiBeanFactory;
 
     private ApiHostMapFactory hostMapFactory;
 
@@ -67,10 +67,10 @@ public class WebServiceEnrollBeanFactoryPostProcessor implements BeanFactoryPost
             if (!isExistBean(beanFactory, bd)) {
                 Class<?> spec = loadWebServiceSpecClass(beanFactory, bd);
                 String beanName = bd.getBeanClassName();
-                WebServiceBean bean = webServiceBeanFactory.createBean(spec, apiHostMap);
+                WebServiceBean bean = ApiBeanFactory.createBean(spec, apiHostMap);
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[웹서비스 빈 등록] bean name: " + beanName + ", class: " + bean);
+                    logger.debug("[API Bean] bean name: " + beanName + ", class: " + bean);
                 }
                 beanFactory.registerSingleton(beanName, bean);
             }
@@ -83,7 +83,7 @@ public class WebServiceEnrollBeanFactoryPostProcessor implements BeanFactoryPost
             Class<?> interfaceClass = Class.forName(bd.getBeanClassName(), true, beanFactory.getBeanClassLoader());
             return interfaceClass;
         } catch (ClassNotFoundException e) {
-            throw new ApiConfigInitializingException("웹서비스 인터페이스의 클래스 로딩 중 에러가 발생했습니다.", e);
+            throw new ApiConfigInitializingException("API 인터페이스의 클래스 로딩 중 에러가 발생했습니다.", e);
         }
     }
 
@@ -91,8 +91,8 @@ public class WebServiceEnrollBeanFactoryPostProcessor implements BeanFactoryPost
         return beanFactory.containsBean(bd.getBeanClassName());
     }
 
-    public void setWebServiceBeanFactory(WebServiceBeanFactory webServiceBeanFactory) {
-        this.webServiceBeanFactory = webServiceBeanFactory;
+    public void setApiBeanFactory(ApiBeanFactory apiBeanFactory) {
+        this.ApiBeanFactory = apiBeanFactory;
     }
 
     public void setBasePackage(String basePackage) {

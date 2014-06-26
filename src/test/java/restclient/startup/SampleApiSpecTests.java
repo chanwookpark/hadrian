@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -13,9 +14,9 @@ import org.springframework.web.client.RestTemplate;
 import restclient.ApiConfigInitializingException;
 
 import static org.junit.Assert.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 /**
  * 참조: http://docs.spring.io/spring/docs/3.2.0.RC1/api/org/springframework/test/web/client/MockRestServiceServer.html
@@ -110,6 +111,19 @@ public class SampleApiSpecTests {
 
     @Test
     public void getWithUrlParameter() throws Exception {
+
+    }
+
+    @Test
+    public void testPostForSave() throws Exception {
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(springTemplate);
+        mockServer.expect(requestTo("http://localhost:9090/sample/sample/"))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.CREATED));
+
+        spec.save(new Sample1());
+
+        mockServer.verify();
 
     }
 }

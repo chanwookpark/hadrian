@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class ApiSpecificationMeta {
     private Map<String, Map<String, String>> namedPathMap;
+    private Map<String, String> entityMap;
 
     public void setNamedPathMap(Map<String, Map<String, String>> namedPathMap) {
         this.namedPathMap = namedPathMap;
@@ -23,5 +24,13 @@ public class ApiSpecificationMeta {
         }
         // Meta 데이터가 없을 수도 있음
         return new HashMap<String, String>();
+    }
+
+    public void setEntityMap(Map<String, String> entityMap) {
+        this.entityMap = entityMap;
+    }
+
+    public Map<String, String> getEntityMap() {
+        return entityMap;
     }
 }

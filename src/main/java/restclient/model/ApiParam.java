@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by chanwook on 2014. 6. 21..
  */
-public class WebServiceParam implements Serializable {
+public class ApiParam implements Serializable {
 
     private String javaMethodName;
 
@@ -18,8 +18,9 @@ public class WebServiceParam implements Serializable {
     private Class<?> returnType;
     private String hostUrl;
     private Map<String, String> namedPathMap;
+    private Object entity;
 
-    public WebServiceParam(String name) {
+    public ApiParam(String name) {
         this.javaMethodName = name;
     }
 
@@ -77,5 +78,13 @@ public class WebServiceParam implements Serializable {
 
     public Map<String, String> getNamedPathMap() {
         return namedPathMap;
+    }
+
+    public Object getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Object entity) {
+        this.entity = entity;
     }
 }

@@ -12,7 +12,7 @@ import static org.junit.Assert.fail;
  * Created by chanwook on 2014. 6. 22..
  */
 public class WebServiceTemplateTests {
-    WebServiceTemplate t = new WebServiceTemplate();
+    ApiTemplate t = new ApiTemplate();
 
     @Test
     public void testPathVar() throws Exception {

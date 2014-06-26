@@ -1,9 +1,7 @@
 package restclient.startup;
 
 import org.springframework.web.bind.annotation.PathVariable;
-import restclient.meta.GET;
-import restclient.meta.Path;
-import restclient.meta.WebService;
+import restclient.meta.*;
 
 /**
  * Created by chanwook on 2014. 6. 18..
@@ -25,6 +23,9 @@ public interface SampleApiSpec {
     @GET(url = "/sample/{name1}")
     Sample1 getWithPath(@Path("name1") String v);
 
-    public Sample1 getWithPath2(@PathVariable("vv") String v);
+    Sample1 getWithPath2(@PathVariable("vv") String v);
+
+    @POST(url = "/sample/")
+    void save(@Body Sample1 s);
 
 }

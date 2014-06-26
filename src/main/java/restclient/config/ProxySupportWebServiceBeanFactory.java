@@ -2,11 +2,12 @@ package restclient.config;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.web.client.RestTemplate;
+import restclient.meta.Body;
 import restclient.meta.Path;
 import restclient.meta.WebService;
 import restclient.model.*;
-import restclient.operation.WebServiceBeanMethodInterceptor;
-import restclient.operation.WebServiceTemplate;
+import restclient.operation.ApiBeanMethodInterceptor;
+import restclient.operation.ApiTemplate;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -18,7 +19,7 @@ import java.util.Map;
  * <p/>
  * Created by chanwook on 2014. 6. 19..
  */
-public class ProxySupportWebServiceBeanFactory implements WebServiceBeanFactory {
+public class ProxySupportWebServiceBeanFactory implements ApiBeanFactory {
 
     private RestTemplate springTemplate;
 
@@ -37,19 +38,19 @@ public class ProxySupportWebServiceBeanFactory implements WebServiceBeanFactory 
         proxy.setTarget(target);
         proxy.setInterfaces(spec, WebServiceBean.class);
 
-        proxy.addAdvice(new WebServiceBeanMethodInterceptor());
+        proxy.addAdvice(new ApiBeanMethodInterceptor());
         return (WebServiceBean) proxy.getProxy();
     }
 
     protected ApiSpecificationMeta createApiSpecMeta(Class<?> spec) {
         ApiSpecificationMeta meta = new ApiSpecificationMeta();
-        Map<String, Map<String, String>> namedPathMap = createNamedPathMap(spec.getDeclaredMethods());
-        meta.setNamedPathMap(namedPathMap);
+        resolveParameterAnnotationMeta(meta, spec.getDeclaredMethods());
         return meta;
     }
 
-    protected Map<String, Map<String, String>> createNamedPathMap(Method[] methods) {
+    protected void resolveParameterAnnotationMeta(ApiSpecificationMeta meta, Method[] methods) {
         Map<String/*Method Name*/, Map<String/*Named Path*/, String/*ParameterIndex*/>> namedPathMap = new HashMap<String, Map<String, String>>();
+        Map<String/*Method Name*/, String/*ParameterIndex*/> entityMap = new HashMap<String, String>();
         for (Method m : methods) {
             String name = m.getName();
             Class<?>[] paramTypes = m.getParameterTypes();
@@ -57,26 +58,29 @@ public class ProxySupportWebServiceBeanFactory implements WebServiceBeanFactory 
                 Annotation[] annotations = paramTypes[paramIndex].getAnnotations();
                 for (Annotation a : annotations) {
                     //@Path 지원
-                    if (a.annotationType().equals(Path.class)) {
+                    if (a instanceof Path) {
                         if (namedPathMap.containsKey(name)) {
                             // index를 1부터 시작
                             namedPathMap.get(name).put(((Path) a).value(), String.valueOf(paramIndex + 1));
                         }
+                    } else if (a instanceof Body) {
+                        entityMap.put(name, String.valueOf(paramIndex + 1));
                     }
                 }
             }
         }
-        return namedPathMap;
+        meta.setNamedPathMap(namedPathMap);
+        meta.setEntityMap(entityMap);
     }
 
     private SimpleWebServiceBean createWebServiceBean(ApiHost host) {
-        WebServiceTemplate template = createWebServiceTemlpate();
+        ApiTemplate template = createWebServiceTemlpate();
         return new SimpleWebServiceBean(template, host);
     }
 
-    private WebServiceTemplate createWebServiceTemlpate() {
+    private ApiTemplate createWebServiceTemlpate() {
         RestTemplate springTemplate = createSpringRestTemplate();
-        return new WebServiceTemplate(springTemplate);
+        return new ApiTemplate(springTemplate);
     }
 
     protected RestTemplate createSpringRestTemplate() {

@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import restclient.ApiConfigInitializingException;
 import restclient.meta.HttpMethod;
-import restclient.model.WebServiceParam;
+import restclient.model.ApiParam;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,38 +18,49 @@ import java.util.regex.Pattern;
 /**
  * Created by chanwook on 2014. 6. 19..
  */
-public class WebServiceTemplate {
-    private final Logger logger = LoggerFactory.getLogger(WebServiceTemplate.class);
+public class ApiTemplate {
+    private final Logger logger = LoggerFactory.getLogger(ApiTemplate.class);
 
     private final RestTemplate springTemplate;
 
-    public WebServiceTemplate() {
+    public ApiTemplate() {
         springTemplate = new RestTemplate();
     }
 
-    public WebServiceTemplate(RestTemplate springTemplate) {
+    public ApiTemplate(RestTemplate springTemplate) {
         this.springTemplate = springTemplate;
     }
 
 
-    public Object execute(WebServiceParam param) {
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity httpEntity = new HttpEntity(headers);
+    public Object execute(ApiParam param) {
+        HttpEntity httpEntity = createHttpEntity(param);
 
         String apiUrl = createApiUrl(param);
         org.springframework.http.HttpMethod method = convertSpringMethod(param.getMethod());
         Map<String, Object> pathParam = createPathParam(param.getUrl(), param.getArguments(), param.getNamedPathMap());
+        Class<?> returnType = param.getReturnType();
+        if (returnType.getName().equals("void")) {
+            returnType = Void.class;
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("===============================================================================");
-            logger.debug("API 호출 상세 정보[url: " + apiUrl + ", method: " + method.name() + ", arguments: " + param.getArguments() +
-                    ", returnType: " + param.getReturnType() + "]");
+            logger.debug("API 호출 상세 정보\n[url: " + apiUrl + ", method: " + method.name() +
+                    ", arguments: " + param.getArguments() +
+                    ", returnType: " + returnType + "]");
             logger.debug("===============================================================================");
         }
 
-        ResponseEntity<?> responseEntity = springTemplate.exchange(apiUrl, method, httpEntity, param.getReturnType(), pathParam);
+        ResponseEntity<?> responseEntity =
+                springTemplate.exchange(apiUrl, method, httpEntity, returnType, pathParam);
 
         return responseEntity.getBody();
+    }
+
+    private HttpEntity createHttpEntity(ApiParam param) {
+        HttpHeaders headers = new HttpHeaders();
+        Object entity = param.getEntity();
+        return new HttpEntity(entity, headers);
     }
 
     protected Map<String, Object> createPathParam(String url, Object[] arguments, Map<String, String> namedPathMap) {
@@ -83,7 +94,7 @@ public class WebServiceTemplate {
         return pathParam;
     }
 
-    private String createApiUrl(WebServiceParam param) {
+    private String createApiUrl(ApiParam param) {
         if (!StringUtils.hasText(param.getUrl()) || !StringUtils.hasText(param.getHostUrl())) {
             throw new ApiConfigInitializingException("API URL 정보가 잘 못됐습니다!!(HOST URL: " + param.getHostUrl() + ", Service URL: " + param.getUrl());
         }
@@ -97,8 +108,12 @@ public class WebServiceTemplate {
         if (method == null) {
             throw new ApiConfigInitializingException("Method Annotation을 반드시 웹서비스 메서드에 지정해야 합니다!");
         }
-        if (method.compareTo(HttpMethod.GET) == 0) return org.springframework.http.HttpMethod.GET;
-        return null;
+        if (method.compareTo(HttpMethod.GET) == 0) {
+            return org.springframework.http.HttpMethod.GET;
+        } else if (method.compareTo(HttpMethod.POST) == 0) {
+            return org.springframework.http.HttpMethod.POST;
+        }
+        throw new IllegalArgumentException(method + "를 지원하지 않습니다.");
     }
 
     public RestTemplate getSpringTemplate() {
