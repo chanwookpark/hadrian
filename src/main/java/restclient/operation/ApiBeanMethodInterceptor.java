@@ -2,9 +2,9 @@ package restclient.operation;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import restclient.meta.GET;
-import restclient.meta.HttpMethod;
-import restclient.meta.POST;
+import restclient.meta.http.GET;
+import restclient.meta.http.HttpMethod;
+import restclient.meta.http.POST;
 import restclient.model.ApiBean;
 import restclient.model.ApiParam;
 

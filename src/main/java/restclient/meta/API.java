@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 @Documented
-public @interface WebService {
+public @interface API {
     String key();
 }

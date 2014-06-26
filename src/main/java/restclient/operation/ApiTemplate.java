@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import restclient.ApiConfigInitializingException;
-import restclient.meta.HttpMethod;
+import restclient.meta.http.HttpMethod;
 import restclient.model.ApiHost;
 import restclient.model.ApiParam;
 

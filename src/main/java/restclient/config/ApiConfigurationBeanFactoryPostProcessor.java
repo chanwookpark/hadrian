@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 import restclient.ApiConfigInitializingException;
-import restclient.meta.WebService;
+import restclient.meta.API;
 import restclient.model.ApiBean;
 import restclient.model.ApiHostMap;
 
@@ -50,7 +50,7 @@ public class ApiConfigurationBeanFactoryPostProcessor implements BeanFactoryPost
                         return true;
                     }
                 };
-        scanner.addIncludeFilter(new AnnotationTypeFilter(WebService.class, true, true));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(API.class, true, true));
 
         return scanner.findCandidateComponents(basePackage);
     }

@@ -1,4 +1,4 @@
-package restclient.meta;
+package restclient.meta.http;
 
 import java.lang.annotation.*;
 

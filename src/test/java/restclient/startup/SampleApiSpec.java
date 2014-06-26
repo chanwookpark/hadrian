@@ -1,11 +1,12 @@
 package restclient.startup;
 
 import restclient.meta.*;
+import restclient.meta.http.*;
 
 /**
  * Created by chanwook on 2014. 6. 18..
  */
-@WebService(key = "sample")
+@API(key = "sample")
 public interface SampleApiSpec {
 
     @GET(url = "/sample")
@@ -27,5 +28,8 @@ public interface SampleApiSpec {
 
     @POST(url = "/sample/")
     void save(@Body Sample1 s);
+
+    @PUT(url = "/sample/")
+    void update(@Body Sample1 s);
 
 }

@@ -2,10 +2,10 @@ package restclient.config;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.web.client.RestTemplate;
-import restclient.meta.Body;
-import restclient.meta.Param;
-import restclient.meta.Path;
-import restclient.meta.WebService;
+import restclient.meta.API;
+import restclient.meta.http.Body;
+import restclient.meta.http.Param;
+import restclient.meta.http.Path;
 import restclient.model.*;
 import restclient.operation.ApiBeanMethodInterceptor;
 import restclient.operation.ApiTemplate;
@@ -26,7 +26,7 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
 
     @Override
     public ApiBean createBean(Class<?> spec, ApiHostMap apiHostMap) {
-        WebService annotation = spec.getAnnotation(WebService.class);
+        API annotation = spec.getAnnotation(API.class);
         String key = annotation.key();
         ApiHost host = apiHostMap.getHost(key);
 

@@ -1,4 +1,4 @@
-package restclient.meta;
+package restclient.meta.http;
 
 /**
  * Created by chanwook on 2014. 6. 21..
