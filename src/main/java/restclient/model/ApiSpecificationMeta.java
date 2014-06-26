@@ -9,6 +9,7 @@ import java.util.Map;
 public class ApiSpecificationMeta {
     private Map<String, Map<String, Integer>> namedPathMap;
     private Map<String, Integer> entityMap;
+    private Map<String, Map<String, Integer>> paramMap;
 
     public Map<String, Integer> getNamedPathMap(String javaMethodName) {
         if (namedPathMap != null && namedPathMap.containsKey(javaMethodName)) {
@@ -43,6 +44,21 @@ public class ApiSpecificationMeta {
             return index;
         }
         return -1;
+    }
+
+    public void setParamMap(Map<String, Map<String, Integer>> paramMap) {
+        this.paramMap = paramMap;
+    }
+
+    public Map<String, Map<String, Integer>> getParamMap() {
+        return paramMap;
+    }
+
+    public Map<String, Integer> getParameters(String javaMethodName) {
+        if (paramMap != null && paramMap.containsKey(javaMethodName)) {
+            return paramMap.get(javaMethodName);
+        }
+        return new HashMap<String, Integer>();
     }
 }
 

@@ -3,6 +3,7 @@ package restclient.config;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.web.client.RestTemplate;
 import restclient.meta.Body;
+import restclient.meta.Param;
 import restclient.meta.Path;
 import restclient.meta.WebService;
 import restclient.model.*;
@@ -51,6 +52,8 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
     protected void resolveParameterAnnotationMeta(ApiSpecificationMeta meta, Method[] methods) {
         Map<String/*Method Name*/, Map<String/*Named Path*/, Integer/*ParameterIndex*/>> namedPathMap = new HashMap<String, Map<String, Integer>>();
         Map<String/*Method Name*/, Integer/*ParameterIndex*/> entityMap = new HashMap<String, Integer>();
+        Map<String/*Method Name*/, Map<String/*Param Key*/, Integer/*ParameterIndex*/>> paramMap = new HashMap<String, Map<String, Integer>>();
+
         for (Method m : methods) {
             String name = m.getName();
             Class<?>[] paramTypes = m.getParameterTypes();
@@ -59,7 +62,6 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
             for (int paramIndex = 0; paramIndex < paramTypes.length; paramIndex++) {
                 Annotation[] annotations = annotationsList[paramIndex];
                 for (Annotation a : annotations) {
-                    //@Path 지원
                     if (a instanceof Path) {
                         String key = ((Path) a).value();
                         if (!namedPathMap.containsKey(name)) {
@@ -69,12 +71,19 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
                         namedPathMap.get(name).put(key, paramIndex + 1);
                     } else if (a instanceof Body) {
                         entityMap.put(name, paramIndex);
+                    } else if (a instanceof Param) {
+                        String key = ((Param) a).value();
+                        if (!paramMap.containsKey(name)) {
+                            paramMap.put(name, new HashMap<String, Integer>());
+                        }
+                        paramMap.get(name).put(key, paramIndex);
                     }
                 }
             }
         }
         meta.setNamedPathMap(namedPathMap);
         meta.setEntityMap(entityMap);
+        meta.setParamMap(paramMap);
     }
 
     private SimpleApiBean createWebServiceBean(ApiHost host) {

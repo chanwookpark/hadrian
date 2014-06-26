@@ -16,9 +16,10 @@ public class ApiParam implements Serializable {
     private HttpMethod method;
     private Object[] arguments;
     private Class<?> returnType;
-    private String hostUrl;
     private Map<String, Integer> namedPathMap;
     private Object entity;
+    private Map<String, Integer> urlParameters;
+    private ApiHost apiHost;
 
     public ApiParam(String name) {
         this.javaMethodName = name;
@@ -56,12 +57,12 @@ public class ApiParam implements Serializable {
         return returnType;
     }
 
-    public void hostUrl(String hostUrl) {
-        this.hostUrl = hostUrl;
+    public void host(ApiHost apiHost) {
+        this.apiHost = apiHost;
     }
 
-    public String getHostUrl() {
-        return hostUrl;
+    public ApiHost getApiHost() {
+        return apiHost;
     }
 
     public String getJavaMethodName() {
@@ -86,5 +87,13 @@ public class ApiParam implements Serializable {
 
     public void setEntity(Object entity) {
         this.entity = entity;
+    }
+
+    public void urlParameters(Map<String, Integer> parameters) {
+        this.urlParameters = parameters;
+    }
+
+    public Map<String, Integer> getUrlParameters() {
+        return urlParameters;
     }
 }

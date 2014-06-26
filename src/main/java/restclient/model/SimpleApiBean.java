@@ -20,15 +20,21 @@ public class SimpleApiBean implements ApiBean {
 
     @Override
     public Object execute(ApiParam param) {
-        param.hostUrl(host.getHostUrl());
+        param.host(host);
         param.namedPathMap(apiSpecificationMeta.getNamedPathMap(param.getJavaMethodName()));
-        resolveParamEntity(param);
+        param.urlParameters(apiSpecificationMeta.getParameters(param.getJavaMethodName()));
+        resolveEntityBody(param);
+        resovleUrlParameter(param);
 
         Object result = template.execute(param);
         return result;
     }
 
-    private void resolveParamEntity(ApiParam param) {
+    private void resovleUrlParameter(ApiParam param) {
+
+    }
+
+    private void resolveEntityBody(ApiParam param) {
         int entityIndex = apiSpecificationMeta.getEntityIndex(param.getJavaMethodName());
         if (entityIndex > 0 && param.getArguments().length > entityIndex) {
             Object entity = param.getArguments()[entityIndex];

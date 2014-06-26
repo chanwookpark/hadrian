@@ -7,8 +7,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import restclient.ApiConfigInitializingException;
 import restclient.meta.HttpMethod;
+import restclient.model.ApiHost;
 import restclient.model.ApiParam;
 
 import java.util.HashMap;
@@ -38,10 +40,7 @@ public class ApiTemplate {
         String apiUrl = createApiUrl(param);
         org.springframework.http.HttpMethod method = convertSpringMethod(param.getMethod());
         Map<String, Object> pathParam = createPathParam(param.getUrl(), param.getArguments(), param.getNamedPathMap());
-        Class<?> returnType = param.getReturnType();
-        if (returnType.getName().equals("void")) {
-            returnType = Void.class;
-        }
+        Class<?> returnType = resolveRetunType(param);
 
         if (logger.isDebugEnabled()) {
             logger.debug("===============================================================================");
@@ -50,6 +49,7 @@ public class ApiTemplate {
                     ", returnType: " + returnType +
                     ", named path: " + param.getNamedPathMap() +
                     ", entity: " + param.getEntity() +
+                    ", url parameter: " + param.getUrlParameters() +
                     "]");
             logger.debug("===============================================================================");
         }
@@ -58,6 +58,14 @@ public class ApiTemplate {
                 springTemplate.exchange(apiUrl, method, httpEntity, returnType, pathParam);
 
         return responseEntity.getBody();
+    }
+
+    private Class<?> resolveRetunType(ApiParam param) {
+        Class<?> returnType = param.getReturnType();
+        if (returnType.getName().equals("void")) {
+            returnType = Void.class;
+        }
+        return returnType;
     }
 
     private HttpEntity createHttpEntity(ApiParam param) {
@@ -98,13 +106,28 @@ public class ApiTemplate {
     }
 
     private String createApiUrl(ApiParam param) {
-        if (!StringUtils.hasText(param.getUrl()) || !StringUtils.hasText(param.getHostUrl())) {
-            throw new ApiConfigInitializingException("API URL 정보가 잘 못됐습니다!!(HOST URL: " + param.getHostUrl() + ", Service URL: " + param.getUrl());
+        if (!StringUtils.hasText(param.getUrl()) || param.getApiHost() == null) {
+            throw new ApiConfigInitializingException("API URL 정보가 잘 못됐습니다!!");
         }
-        if (param.getUrl().startsWith("/")) {
-            return param.getHostUrl() + param.getUrl().substring(1);
+
+        ApiHost apiHost = param.getApiHost();
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance();
+        uriBuilder
+                .scheme("http")
+                .host(apiHost.getHost())
+                .port(apiHost.getPort())
+                .path(apiHost.getContextRoot())
+                .path(param.getUrl());
+
+        // parameter
+        Map<String, Integer> urlParameters = param.getUrlParameters();
+        for (Map.Entry<String, Integer> e : urlParameters.entrySet()) {
+            String k = e.getKey();
+            //TODO suport multi value
+            Object v = param.getArguments()[e.getValue()];
+            uriBuilder.queryParam(k, v);
         }
-        return param.getHostUrl() + param.getUrl();
+        return uriBuilder.build().toUriString();
     }
 
     private org.springframework.http.HttpMethod convertSpringMethod(HttpMethod method) {
