@@ -1,12 +1,12 @@
 package restclient.config;
 
+import restclient.model.ApiBean;
 import restclient.model.ApiHostMap;
-import restclient.model.WebServiceBean;
 
 /**
  * Created by chanwook on 2014. 6. 19..
  */
 public interface ApiBeanFactory {
 
-    WebServiceBean createBean(Class<?> spec, ApiHostMap apiHostMap);
+    ApiBean createBean(Class<?> spec, ApiHostMap apiHostMap);
 }

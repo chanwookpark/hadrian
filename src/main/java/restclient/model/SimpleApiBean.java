@@ -5,7 +5,7 @@ import restclient.operation.ApiTemplate;
 /**
  * Created by chanwook on 2014. 6. 19..
  */
-public class SimpleWebServiceBean implements WebServiceBean {
+public class SimpleApiBean implements ApiBean {
 
     private final ApiTemplate template;
 
@@ -13,7 +13,7 @@ public class SimpleWebServiceBean implements WebServiceBean {
 
     private ApiSpecificationMeta apiSpecificationMeta;
 
-    public SimpleWebServiceBean(ApiTemplate template, ApiHost host) {
+    public SimpleApiBean(ApiTemplate template, ApiHost host) {
         this.template = template;
         this.host = host;
     }
@@ -22,10 +22,20 @@ public class SimpleWebServiceBean implements WebServiceBean {
     public Object execute(ApiParam param) {
         param.hostUrl(host.getHostUrl());
         param.namedPathMap(apiSpecificationMeta.getNamedPathMap(param.getJavaMethodName()));
-        param.setEntity(apiSpecificationMeta.getEntityMap().get(param.getJavaMethodName()));
+        resolveParamEntity(param);
 
         Object result = template.execute(param);
         return result;
+    }
+
+    private void resolveParamEntity(ApiParam param) {
+        int entityIndex = apiSpecificationMeta.getEntityIndex(param.getJavaMethodName());
+        if (entityIndex > 0 && param.getArguments().length > entityIndex) {
+            Object entity = param.getArguments()[entityIndex];
+            if (entity != null) {
+                param.setEntity(entity);
+            }
+        }
     }
 
     public ApiHost getHost() {

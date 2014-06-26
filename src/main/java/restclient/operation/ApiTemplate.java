@@ -47,7 +47,10 @@ public class ApiTemplate {
             logger.debug("===============================================================================");
             logger.debug("API 호출 상세 정보\n[url: " + apiUrl + ", method: " + method.name() +
                     ", arguments: " + param.getArguments() +
-                    ", returnType: " + returnType + "]");
+                    ", returnType: " + returnType +
+                    ", named path: " + param.getNamedPathMap() +
+                    ", entity: " + param.getEntity() +
+                    "]");
             logger.debug("===============================================================================");
         }
 
@@ -63,7 +66,7 @@ public class ApiTemplate {
         return new HttpEntity(entity, headers);
     }
 
-    protected Map<String, Object> createPathParam(String url, Object[] arguments, Map<String, String> namedPathMap) {
+    protected Map<String, Object> createPathParam(String url, Object[] arguments, Map<String, Integer> namedPathMap) {
         Map<String, Object> pathParam = new HashMap<String, Object>();
         String[] vars = url.split("/");
         for (String v : vars) {
@@ -80,7 +83,7 @@ public class ApiTemplate {
                     pathParam.put(key, value);
                 } else/* named path 지원 */ {
                     if (namedPathMap.containsKey(key)) {
-                        int paramIndex = Integer.parseInt(namedPathMap.get(key));
+                        int paramIndex = namedPathMap.get(key);
                         if (paramIndex > arguments.length) {
                             throw new IllegalArgumentException(key + "에 해당하는 순번의 파라미터 인자 값이 전달되지 않았습니다!(key: " + key + ", index: " + paramIndex + ", 파라미터 크기: " + arguments.length + ")");
                         }

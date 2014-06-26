@@ -1,6 +1,5 @@
 package restclient.startup;
 
-import org.springframework.web.bind.annotation.PathVariable;
 import restclient.meta.*;
 
 /**
@@ -21,9 +20,10 @@ public interface SampleApiSpec {
     Sample1 get(int v0, String v1, String v2);
 
     @GET(url = "/sample/{name1}")
-    Sample1 getWithPath(@Path("name1") String v);
+    Sample1 getWithPath(@Path("name1") String path);
 
-    Sample1 getWithPath2(@PathVariable("vv") String v);
+    @GET(url = "/sample/{path1}")
+    Sample1 getWithPath2(@Path("path1") String path, @Param("param1") String param);
 
     @POST(url = "/sample/")
     void save(@Body Sample1 s);

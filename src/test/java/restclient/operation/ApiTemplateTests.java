@@ -11,7 +11,7 @@ import static org.junit.Assert.fail;
 /**
  * Created by chanwook on 2014. 6. 22..
  */
-public class WebServiceTemplateTests {
+public class ApiTemplateTests {
     ApiTemplate t = new ApiTemplate();
 
     @Test
@@ -50,13 +50,13 @@ public class WebServiceTemplateTests {
 
     @Test
     public void testNamedPath() throws Exception {
-        HashMap<String, String> namedPathMap = new HashMap<String, String>();
-        namedPathMap.put("name1", "1");
+        HashMap<String, Integer> namedPathMap = new HashMap<String, Integer>();
+        namedPathMap.put("name1", 1);
         assertEquals("value1", t.createPathParam("/path/{name1}/v", new Object[]{"value1"}, namedPathMap).get("name1"));
 
-        namedPathMap = new HashMap<String, String>();
-        namedPathMap.put("name1", "1");
-        namedPathMap.put("key1", "2");
+        namedPathMap = new HashMap<String, Integer>();
+        namedPathMap.put("name1", 1);
+        namedPathMap.put("key1", 2);
 
         Map<String, Object> result = t.createPathParam("/path/{name1}/v/{key1}/c", new Object[]{"value1", "value2"}, namedPathMap);
         assertEquals("value1", result.get("name1"));
@@ -65,13 +65,13 @@ public class WebServiceTemplateTests {
 
     @Test(expected = IllegalArgumentException.class)
     public void testOutOfIndexWhenNamedPath() throws Exception {
-        HashMap<String, String> namedPathMap = new HashMap<String, String>();
-        namedPathMap.put("name1", "1");
+        HashMap<String, Integer> namedPathMap = new HashMap<String, Integer>();
+        namedPathMap.put("name1", 1);
         t.createPathParam("/path/{name1}/v", new Object[]{}, namedPathMap).get("name1");
     }
 
-    private Map<String, String> getDefaultNamedPathMap() {
-        return new HashMap<String, String>();
+    private Map<String, Integer> getDefaultNamedPathMap() {
+        return new HashMap<String, Integer>();
     }
 
 }

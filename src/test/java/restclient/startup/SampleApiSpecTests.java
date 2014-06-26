@@ -15,8 +15,8 @@ import restclient.ApiConfigInitializingException;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * 참조: http://docs.spring.io/spring/docs/3.2.0.RC1/api/org/springframework/test/web/client/MockRestServiceServer.html
@@ -92,7 +92,6 @@ public class SampleApiSpecTests {
         mockServer.verify();
     }
 
-    @Ignore("@파람키가 먹지 않아서 임시로 막았음요..")
     @Test
     public void testPathVarWithKey() throws Exception {
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(springTemplate);
@@ -111,17 +110,33 @@ public class SampleApiSpecTests {
 
     @Test
     public void getWithUrlParameter() throws Exception {
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(springTemplate);
+        mockServer.expect(requestTo("http://localhost:9090/sample/sample/path123?param1=param123"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{\"id\":\"2\", \"text1\":\"value2\"}", MediaType.APPLICATION_JSON));
+
+        Sample1 r = spec.getWithPath2("path123", "param123");
+
+        assertNotNull(r);
+        assertEquals(2, r.getId());
+        assertEquals("value2", r.getText1());
+
+        mockServer.verify();
 
     }
 
     @Test
-    public void testPostForSave() throws Exception {
+    public void postWithEntity() throws Exception {
+        Sample1 s = new Sample1(1L, "value1");
+
         MockRestServiceServer mockServer = MockRestServiceServer.createServer(springTemplate);
         mockServer.expect(requestTo("http://localhost:9090/sample/sample/"))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.CREATED));
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(jsonPath("$.id").value((int) s.getId()))
+                .andExpect(jsonPath("$.text1").value(s.getText1()))
+                .andRespond(withStatus(HttpStatus.CREATED));
 
-        spec.save(new Sample1());
+        spec.save(s);
 
         mockServer.verify();
 

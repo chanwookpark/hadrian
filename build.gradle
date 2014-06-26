@@ -16,7 +16,11 @@ jar {
 }
 
 dependencies {
+    // test
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile 'com.jayway.jsonpath:json-path:0.9.1'
+    testCompile 'com.jayway.jsonpath:json-path-assert:0.9.1'
+
     // spring
     compile group: 'org.springframework', name: 'spring-web', version: '4.0.5.RELEASE'
     testCompile group: 'org.springframework', name: 'spring-test', version: '4.0.5.RELEASE'

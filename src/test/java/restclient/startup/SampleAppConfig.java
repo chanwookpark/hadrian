@@ -4,8 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import restclient.config.ApiConfigurationBeanFactoryPostProcessor;
+import restclient.config.ProxySupportApiBeanFactory;
 import restclient.config.XmlConfigurationApiHostMapFactory;
-import restclient.config.ProxySupportWebServiceBeanFactory;
 
 /**
  * Created by chanwook on 2014. 6. 19..
@@ -22,8 +22,8 @@ public class SampleAppConfig {
         return bfpp;
     }
 
-    private ProxySupportWebServiceBeanFactory createWebServiceBeanFactory() {
-        ProxySupportWebServiceBeanFactory factory = new ProxySupportWebServiceBeanFactory();
+    private ProxySupportApiBeanFactory createWebServiceBeanFactory() {
+        ProxySupportApiBeanFactory factory = new ProxySupportApiBeanFactory();
         factory.setSpringTemplate(getRestTemlpate());
         return factory;
     }

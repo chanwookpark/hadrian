@@ -5,8 +5,8 @@ import org.aopalliance.intercept.MethodInvocation;
 import restclient.meta.GET;
 import restclient.meta.HttpMethod;
 import restclient.meta.POST;
+import restclient.model.ApiBean;
 import restclient.model.ApiParam;
-import restclient.model.WebServiceBean;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -23,8 +23,8 @@ public class ApiBeanMethodInterceptor implements MethodInterceptor {
             return invocation.proceed();
         }
 
-        if (invocation.getThis() instanceof WebServiceBean) {
-            WebServiceBean wsb = (WebServiceBean) invocation.getThis();
+        if (invocation.getThis() instanceof ApiBean) {
+            ApiBean wsb = (ApiBean) invocation.getThis();
             ApiParam param = new ApiParam(invocation.getMethod().getName());
 
             resolveHttpMethod(param, invocation.getMethod());

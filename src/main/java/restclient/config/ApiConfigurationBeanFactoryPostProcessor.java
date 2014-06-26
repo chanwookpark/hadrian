@@ -9,10 +9,11 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.util.ClassUtils;
 import restclient.ApiConfigInitializingException;
 import restclient.meta.WebService;
+import restclient.model.ApiBean;
 import restclient.model.ApiHostMap;
-import restclient.model.WebServiceBean;
 
 import java.util.Set;
 
@@ -67,7 +68,7 @@ public class ApiConfigurationBeanFactoryPostProcessor implements BeanFactoryPost
             if (!isExistBean(beanFactory, bd)) {
                 Class<?> spec = loadWebServiceSpecClass(beanFactory, bd);
                 String beanName = bd.getBeanClassName();
-                WebServiceBean bean = ApiBeanFactory.createBean(spec, apiHostMap);
+                ApiBean bean = ApiBeanFactory.createBean(spec, apiHostMap);
 
                 if (logger.isDebugEnabled()) {
                     logger.debug("[API Bean] bean name: " + beanName + ", class: " + bean);
@@ -79,8 +80,8 @@ public class ApiConfigurationBeanFactoryPostProcessor implements BeanFactoryPost
 
     private Class<?> loadWebServiceSpecClass(ConfigurableListableBeanFactory beanFactory, BeanDefinition bd) {
         try {
-//            Class<?> interfaceClass = ClassUtils.forName(bd.getBeanClassName(), null);
-            Class<?> interfaceClass = Class.forName(bd.getBeanClassName(), true, beanFactory.getBeanClassLoader());
+            Class<?> interfaceClass = ClassUtils.forName(bd.getBeanClassName(), null);
+//            Class<?> interfaceClass = Class.forName(bd.getBeanClassName(), true, beanFactory.getBeanClassLoader());
             return interfaceClass;
         } catch (ClassNotFoundException e) {
             throw new ApiConfigInitializingException("API 인터페이스의 클래스 로딩 중 에러가 발생했습니다.", e);

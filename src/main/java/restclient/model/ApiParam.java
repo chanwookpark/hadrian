@@ -17,7 +17,7 @@ public class ApiParam implements Serializable {
     private Object[] arguments;
     private Class<?> returnType;
     private String hostUrl;
-    private Map<String, String> namedPathMap;
+    private Map<String, Integer> namedPathMap;
     private Object entity;
 
     public ApiParam(String name) {
@@ -72,11 +72,11 @@ public class ApiParam implements Serializable {
         this.javaMethodName = javaMethodName;
     }
 
-    public void namedPathMap(Map<String, String> namedPathMap) {
+    public void namedPathMap(Map<String, Integer> namedPathMap) {
         this.namedPathMap = namedPathMap;
     }
 
-    public Map<String, String> getNamedPathMap() {
+    public Map<String, Integer> getNamedPathMap() {
         return namedPathMap;
     }
 

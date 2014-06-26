@@ -7,30 +7,42 @@ import java.util.Map;
  * Created by chanwook on 2014. 6. 23..
  */
 public class ApiSpecificationMeta {
-    private Map<String, Map<String, String>> namedPathMap;
-    private Map<String, String> entityMap;
+    private Map<String, Map<String, Integer>> namedPathMap;
+    private Map<String, Integer> entityMap;
 
-    public void setNamedPathMap(Map<String, Map<String, String>> namedPathMap) {
-        this.namedPathMap = namedPathMap;
-    }
-
-    public Map<String, Map<String, String>> getNamedPathMap() {
-        return namedPathMap;
-    }
-
-    public Map<String, String> getNamedPathMap(String javaMethodName) {
-        if (namedPathMap.containsKey(javaMethodName)) {
+    public Map<String, Integer> getNamedPathMap(String javaMethodName) {
+        if (namedPathMap != null && namedPathMap.containsKey(javaMethodName)) {
             return namedPathMap.get(javaMethodName);
         }
         // Meta 데이터가 없을 수도 있음
-        return new HashMap<String, String>();
+        return new HashMap<String, Integer>();
     }
 
-    public void setEntityMap(Map<String, String> entityMap) {
+    public Map<String, Integer> getEntityMap() {
+        if (entityMap != null) {
+            return entityMap;
+        }
+        return entityMap;
+    }
+
+    public Map<String, Map<String, Integer>> getNamedPathMap() {
+        return namedPathMap;
+    }
+
+    public void setEntityMap(Map<String, Integer> entityMap) {
         this.entityMap = entityMap;
     }
 
-    public Map<String, String> getEntityMap() {
-        return entityMap;
+    public void setNamedPathMap(Map<String, Map<String, Integer>> namedPathMap) {
+        this.namedPathMap = namedPathMap;
+    }
+
+    public int getEntityIndex(String javaMethodName) {
+        if (entityMap != null && entityMap.containsKey(javaMethodName)) {
+            Integer index = entityMap.get(javaMethodName);
+            return index;
+        }
+        return -1;
     }
 }
+

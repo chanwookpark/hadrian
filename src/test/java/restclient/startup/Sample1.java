@@ -10,7 +10,11 @@ public class Sample1 {
     private String text1;
 
     public Sample1() {
+    }
 
+    public Sample1(long id, String text1) {
+        this.id = id;
+        this.text1 = text1;
     }
 
     public long getId() {

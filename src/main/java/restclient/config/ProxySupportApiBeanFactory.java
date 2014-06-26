@@ -19,27 +19,27 @@ import java.util.Map;
  * <p/>
  * Created by chanwook on 2014. 6. 19..
  */
-public class ProxySupportWebServiceBeanFactory implements ApiBeanFactory {
+public class ProxySupportApiBeanFactory implements ApiBeanFactory {
 
     private RestTemplate springTemplate;
 
     @Override
-    public WebServiceBean createBean(Class<?> spec, ApiHostMap apiHostMap) {
+    public ApiBean createBean(Class<?> spec, ApiHostMap apiHostMap) {
         WebService annotation = spec.getAnnotation(WebService.class);
         String key = annotation.key();
         ApiHost host = apiHostMap.getHost(key);
 
-        SimpleWebServiceBean target = createWebServiceBean(host);
+        SimpleApiBean target = createWebServiceBean(host);
 
         ApiSpecificationMeta specMeta = createApiSpecMeta(spec);
         target.setApiSpecificationMeta(specMeta);
 
         ProxyFactory proxy = new ProxyFactory();
         proxy.setTarget(target);
-        proxy.setInterfaces(spec, WebServiceBean.class);
+        proxy.setInterfaces(spec, ApiBean.class);
 
         proxy.addAdvice(new ApiBeanMethodInterceptor());
-        return (WebServiceBean) proxy.getProxy();
+        return (ApiBean) proxy.getProxy();
     }
 
     protected ApiSpecificationMeta createApiSpecMeta(Class<?> spec) {
@@ -49,22 +49,26 @@ public class ProxySupportWebServiceBeanFactory implements ApiBeanFactory {
     }
 
     protected void resolveParameterAnnotationMeta(ApiSpecificationMeta meta, Method[] methods) {
-        Map<String/*Method Name*/, Map<String/*Named Path*/, String/*ParameterIndex*/>> namedPathMap = new HashMap<String, Map<String, String>>();
-        Map<String/*Method Name*/, String/*ParameterIndex*/> entityMap = new HashMap<String, String>();
+        Map<String/*Method Name*/, Map<String/*Named Path*/, Integer/*ParameterIndex*/>> namedPathMap = new HashMap<String, Map<String, Integer>>();
+        Map<String/*Method Name*/, Integer/*ParameterIndex*/> entityMap = new HashMap<String, Integer>();
         for (Method m : methods) {
             String name = m.getName();
             Class<?>[] paramTypes = m.getParameterTypes();
+            Annotation[][] annotationsList = m.getParameterAnnotations();
+
             for (int paramIndex = 0; paramIndex < paramTypes.length; paramIndex++) {
-                Annotation[] annotations = paramTypes[paramIndex].getAnnotations();
+                Annotation[] annotations = annotationsList[paramIndex];
                 for (Annotation a : annotations) {
                     //@Path 지원
                     if (a instanceof Path) {
-                        if (namedPathMap.containsKey(name)) {
-                            // index를 1부터 시작
-                            namedPathMap.get(name).put(((Path) a).value(), String.valueOf(paramIndex + 1));
+                        String key = ((Path) a).value();
+                        if (!namedPathMap.containsKey(name)) {
+                            namedPathMap.put(name, new HashMap<String, Integer>());
                         }
+                        // 숫자로 직접 매핑하기 때문에 index를 1부터 시작
+                        namedPathMap.get(name).put(key, paramIndex + 1);
                     } else if (a instanceof Body) {
-                        entityMap.put(name, String.valueOf(paramIndex + 1));
+                        entityMap.put(name, paramIndex);
                     }
                 }
             }
@@ -73,9 +77,9 @@ public class ProxySupportWebServiceBeanFactory implements ApiBeanFactory {
         meta.setEntityMap(entityMap);
     }
 
-    private SimpleWebServiceBean createWebServiceBean(ApiHost host) {
+    private SimpleApiBean createWebServiceBean(ApiHost host) {
         ApiTemplate template = createWebServiceTemlpate();
-        return new SimpleWebServiceBean(template, host);
+        return new SimpleApiBean(template, host);
     }
 
     private ApiTemplate createWebServiceTemlpate() {
