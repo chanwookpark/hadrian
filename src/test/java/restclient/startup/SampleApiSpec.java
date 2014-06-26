@@ -1,6 +1,6 @@
 package restclient.startup;
 
-import restclient.meta.*;
+import restclient.meta.API;
 import restclient.meta.http.*;
 
 /**
@@ -32,4 +32,6 @@ public interface SampleApiSpec {
     @PUT(url = "/sample/")
     void update(@Body Sample1 s);
 
+    @DELETE(url = "/sample/{key}")
+    void delete(@Path("key") int key);
 }

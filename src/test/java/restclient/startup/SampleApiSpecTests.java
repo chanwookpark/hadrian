@@ -155,4 +155,16 @@ public class SampleApiSpecTests {
 
         mockServer.verify();
     }
+
+    @Test
+    public void deleteByKey() throws Exception {
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(springTemplate);
+        mockServer.expect(requestTo("http://localhost:9090/sample/sample/1"))
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withStatus(HttpStatus.OK));
+
+        spec.delete(1);
+
+        mockServer.verify();
+    }
 }
