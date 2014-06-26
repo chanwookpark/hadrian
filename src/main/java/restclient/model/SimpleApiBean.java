@@ -36,7 +36,7 @@ public class SimpleApiBean implements ApiBean {
 
     private void resolveEntityBody(ApiParam param) {
         int entityIndex = apiSpecificationMeta.getEntityIndex(param.getJavaMethodName());
-        if (entityIndex > 0 && param.getArguments().length > entityIndex) {
+        if (entityIndex > -1 && param.getArguments().length > entityIndex) {
             Object entity = param.getArguments()[entityIndex];
             if (entity != null) {
                 param.setEntity(entity);

@@ -30,7 +30,7 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
         String key = annotation.key();
         ApiHost host = apiHostMap.getHost(key);
 
-        SimpleApiBean target = createWebServiceBean(host);
+        SimpleApiBean target = createApiBean(host);
 
         ApiSpecificationMeta specMeta = createApiSpecMeta(spec);
         target.setApiSpecificationMeta(specMeta);
@@ -86,7 +86,7 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
         meta.setParamMap(paramMap);
     }
 
-    private SimpleApiBean createWebServiceBean(ApiHost host) {
+    private SimpleApiBean createApiBean(ApiHost host) {
         ApiTemplate template = createWebServiceTemlpate();
         return new SimpleApiBean(template, host);
     }

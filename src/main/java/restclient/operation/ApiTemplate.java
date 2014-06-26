@@ -9,7 +9,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import restclient.ApiConfigInitializingException;
-import restclient.meta.http.HttpMethod;
 import restclient.model.ApiHost;
 import restclient.model.ApiParam;
 
@@ -35,27 +34,25 @@ public class ApiTemplate {
 
 
     public Object execute(ApiParam param) {
-        HttpEntity httpEntity = createHttpEntity(param);
-
         String apiUrl = createApiUrl(param);
-        org.springframework.http.HttpMethod method = convertSpringMethod(param.getMethod());
+        HttpEntity httpEntity = createHttpEntity(param);
         Map<String, Object> pathParam = createPathParam(param.getUrl(), param.getArguments(), param.getNamedPathMap());
         Class<?> returnType = resolveRetunType(param);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("===============================================================================");
-            logger.debug("API 호출 상세 정보\n[url: " + apiUrl + ", method: " + method.name() +
+            logger.debug("===============================================================================" +
+                "\nAPI 호출 상세 정보 [URL: " + apiUrl +
+                    ", method: " + param.getMethod().name() +
                     ", arguments: " + param.getArguments() +
                     ", returnType: " + returnType +
                     ", named path: " + param.getNamedPathMap() +
                     ", entity: " + param.getEntity() +
                     ", url parameter: " + param.getUrlParameters() +
-                    "]");
-            logger.debug("===============================================================================");
+                    "]\n===============================================================================");
         }
 
         ResponseEntity<?> responseEntity =
-                springTemplate.exchange(apiUrl, method, httpEntity, returnType, pathParam);
+                springTemplate.exchange(apiUrl, param.getMethod(), httpEntity, returnType, pathParam);
 
         return responseEntity.getBody();
     }
@@ -128,18 +125,6 @@ public class ApiTemplate {
             uriBuilder.queryParam(k, v);
         }
         return uriBuilder.build().toUriString();
-    }
-
-    private org.springframework.http.HttpMethod convertSpringMethod(HttpMethod method) {
-        if (method == null) {
-            throw new ApiConfigInitializingException("Method Annotation을 반드시 웹서비스 메서드에 지정해야 합니다!");
-        }
-        if (method.compareTo(HttpMethod.GET) == 0) {
-            return org.springframework.http.HttpMethod.GET;
-        } else if (method.compareTo(HttpMethod.POST) == 0) {
-            return org.springframework.http.HttpMethod.POST;
-        }
-        throw new IllegalArgumentException(method + "를 지원하지 않습니다.");
     }
 
     public RestTemplate getSpringTemplate() {

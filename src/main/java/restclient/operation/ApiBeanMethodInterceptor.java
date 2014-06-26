@@ -2,9 +2,11 @@ package restclient.operation;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.http.HttpMethod;
+import restclient.meta.http.DELETE;
 import restclient.meta.http.GET;
-import restclient.meta.http.HttpMethod;
 import restclient.meta.http.POST;
+import restclient.meta.http.PUT;
 import restclient.model.ApiBean;
 import restclient.model.ApiParam;
 
@@ -24,7 +26,7 @@ public class ApiBeanMethodInterceptor implements MethodInterceptor {
         }
 
         if (invocation.getThis() instanceof ApiBean) {
-            ApiBean wsb = (ApiBean) invocation.getThis();
+            ApiBean bean = (ApiBean) invocation.getThis();
             ApiParam param = new ApiParam(invocation.getMethod().getName());
 
             resolveHttpMethod(param, invocation.getMethod());
@@ -33,7 +35,7 @@ public class ApiBeanMethodInterceptor implements MethodInterceptor {
 
             param.returnType(invocation.getMethod().getReturnType());
 
-            Object response = wsb.execute(param);
+            Object response = bean.execute(param);
 
             return response;
         }
@@ -51,6 +53,14 @@ public class ApiBeanMethodInterceptor implements MethodInterceptor {
                 POST post = (POST) a;
                 param.url(post.url());
                 param.method(HttpMethod.POST);
+            } else if (a instanceof PUT) {
+                PUT put = (PUT) a;
+                param.url(put.url());
+                param.method(HttpMethod.PUT);
+            } else if (a instanceof DELETE) {
+                DELETE delete = (DELETE) a;
+                param.url(delete.url());
+                param.method(HttpMethod.DELETE);
             }
         }
     }

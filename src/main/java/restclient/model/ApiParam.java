@@ -1,6 +1,6 @@
 package restclient.model;
 
-import restclient.meta.http.HttpMethod;
+import org.springframework.http.HttpMethod;
 
 import java.io.Serializable;
 import java.util.Map;

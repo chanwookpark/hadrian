@@ -1,6 +1,5 @@
 package restclient.startup;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,6 +138,21 @@ public class SampleApiSpecTests {
         spec.save(s);
 
         mockServer.verify();
+    }
 
+    @Test
+    public void putWithEntity() throws Exception {
+        Sample1 s = new Sample1(1L, "value1");
+
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(springTemplate);
+        mockServer.expect(requestTo("http://localhost:9090/sample/sample/"))
+                .andExpect(method(HttpMethod.PUT))
+                .andExpect(jsonPath("$.id").value((int) s.getId()))
+                .andExpect(jsonPath("$.text1").value(s.getText1()))
+                .andRespond(withStatus(HttpStatus.OK));
+
+        spec.update(s);
+
+        mockServer.verify();
     }
 }
