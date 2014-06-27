@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import restclient.ApiConfigInitializingException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
@@ -85,6 +87,28 @@ public class SampleApiSpecTests {
                 .andRespond(withSuccess("{\"id\":\"123\", \"text1\":\"value2\"}", MediaType.APPLICATION_JSON));
 
         Sample1 r = spec.get(1, "2", "d");
+
+        assertNotNull(r);
+        assertEquals(123, r.getId());
+        assertEquals("value2", r.getText1());
+
+        mockServer.verify();
+    }
+
+    @Test
+    public void withMapParam() throws Exception {
+        Map<String, String> paramMap = new HashMap<String, String>();
+        paramMap.put("key1", "value1");
+        paramMap.put("key2", "value2");
+        paramMap.put("key3", "value3");
+
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(springTemplate);
+        //sample/{2}/u/{3}/c/{1}
+        mockServer.expect(requestTo("http://localhost:9090/sample/sample/path1?key3=value3&key2=value2&key1=value1"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{\"id\":\"123\", \"text1\":\"value2\"}", MediaType.APPLICATION_JSON));
+
+        Sample1 r = spec.getWithMapParam("path1", paramMap);
 
         assertNotNull(r);
         assertEquals(123, r.getId());

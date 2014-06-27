@@ -3,6 +3,8 @@ package restclient.startup;
 import restclient.meta.API;
 import restclient.meta.http.*;
 
+import java.util.Map;
+
 /**
  * Created by chanwook on 2014. 6. 18..
  */
@@ -26,6 +28,9 @@ public interface SampleApiSpec {
     @GET(url = "/sample/{path1}")
     Sample1 getWithPath2(@Path("path1") String path, @Param("param1") String param);
 
+    @GET(url = "/sample/{path1}")
+    Sample1 getWithMapParam(@Path("path1") String path, @Param("param1") Map<String, String> paramMap);
+
     @POST(url = "/sample/")
     void save(@Body Sample1 s);
 
@@ -34,4 +39,5 @@ public interface SampleApiSpec {
 
     @DELETE(url = "/sample/{key}")
     void delete(@Path("key") int key);
+
 }

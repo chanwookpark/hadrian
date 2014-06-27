@@ -5,11 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-import restclient.ApiConfigInitializingException;
-import restclient.model.ApiHost;
 import restclient.model.ApiParam;
 
 import java.util.HashMap;
@@ -22,19 +18,12 @@ import java.util.regex.Pattern;
 public class ApiTemplate {
     private final Logger logger = LoggerFactory.getLogger(ApiTemplate.class);
 
-    private final RestTemplate springTemplate;
+    private RestTemplate springTemplate;
 
-    public ApiTemplate() {
-        springTemplate = new RestTemplate();
-    }
-
-    public ApiTemplate(RestTemplate springTemplate) {
-        this.springTemplate = springTemplate;
-    }
-
+    private ApiUrlBuilder urlBuilder = new SpringSupportApiUrlBuilder();
 
     public Object execute(ApiParam param) {
-        String apiUrl = createApiUrl(param);
+        String apiUrl = urlBuilder.build(param);
         HttpEntity httpEntity = createHttpEntity(param);
         Map<String, Object> pathParam = createPathParam(param.getUrl(), param.getArguments(), param.getNamedPathMap());
         Class<?> returnType = resolveRetunType(param);
@@ -102,32 +91,16 @@ public class ApiTemplate {
         return pathParam;
     }
 
-    private String createApiUrl(ApiParam param) {
-        if (!StringUtils.hasText(param.getUrl()) || param.getApiHost() == null) {
-            throw new ApiConfigInitializingException("API URL 정보가 잘 못됐습니다!!");
-        }
-
-        ApiHost apiHost = param.getApiHost();
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance();
-        uriBuilder
-                .scheme("http")
-                .host(apiHost.getHost())
-                .port(apiHost.getPort())
-                .path(apiHost.getContextRoot())
-                .path(param.getUrl());
-
-        // parameter
-        Map<String, Integer> urlParameters = param.getUrlParameters();
-        for (Map.Entry<String, Integer> e : urlParameters.entrySet()) {
-            String k = e.getKey();
-            //TODO suport multi value
-            Object v = param.getArguments()[e.getValue()];
-            uriBuilder.queryParam(k, v);
-        }
-        return uriBuilder.build().toUriString();
-    }
-
     public RestTemplate getSpringTemplate() {
         return springTemplate;
     }
+
+    public ApiTemplate() {
+        springTemplate = new RestTemplate();
+    }
+
+    public ApiTemplate(RestTemplate springTemplate) {
+        this.springTemplate = springTemplate;
+    }
+
 }
