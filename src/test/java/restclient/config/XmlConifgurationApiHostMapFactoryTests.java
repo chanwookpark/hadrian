@@ -17,7 +17,7 @@ public class XmlConifgurationApiHostMapFactoryTests {
     @Test
     public void testLoadXmlConfig() throws Exception {
         XmlConfigurationApiHostMapFactory f = new XmlConfigurationApiHostMapFactory();
-        ApiHostMap map = f.loadHostMap("local");
+        ApiHostMap map = f.loadHostMap();
 
         assertNotNull(map);
         assertTrue(2 == map.getApiHostList().size());

@@ -33,7 +33,7 @@ public class ApiConfigurationBeanFactoryPostProcessor implements BeanFactoryPost
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
-        ApiHostMap hostMap = hostMapFactory.loadHostMap("local");
+        ApiHostMap hostMap = hostMapFactory.loadHostMap();
 
         Set<BeanDefinition> candidateComponents = scanningCandidateBeanDefinition();
 
@@ -103,4 +103,5 @@ public class ApiConfigurationBeanFactoryPostProcessor implements BeanFactoryPost
     public void setHostMapFactory(ApiHostMapFactory hostMapFactory) {
         this.hostMapFactory = hostMapFactory;
     }
+
 }
