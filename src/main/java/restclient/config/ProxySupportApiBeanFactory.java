@@ -2,13 +2,19 @@ package restclient.config;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.web.client.RestTemplate;
+import restclient.cache.CacheEntryMeta;
 import restclient.meta.API;
+import restclient.meta.Cache;
 import restclient.meta.http.Body;
 import restclient.meta.http.Param;
 import restclient.meta.http.Path;
-import restclient.model.*;
+import restclient.model.ApiHost;
+import restclient.model.ApiHostMap;
+import restclient.model.ApiSpecificationMeta;
+import restclient.operation.ApiBean;
 import restclient.operation.ApiBeanMethodInterceptor;
 import restclient.operation.ApiTemplate;
+import restclient.operation.SimpleApiBean;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -45,17 +51,32 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
 
     protected ApiSpecificationMeta createApiSpecMeta(Class<?> spec) {
         ApiSpecificationMeta meta = new ApiSpecificationMeta();
-        resolveParameterAnnotationMeta(meta, spec.getDeclaredMethods());
+        resolveSpecificationAnnotationMeta(meta, spec.getDeclaredMethods());
         return meta;
     }
 
-    protected void resolveParameterAnnotationMeta(ApiSpecificationMeta meta, Method[] methods) {
+    protected void resolveSpecificationAnnotationMeta(ApiSpecificationMeta meta, Method[] methods) {
         Map<String/*Method Name*/, Map<String/*Named Path*/, Integer/*ParameterIndex*/>> namedPathMap = new HashMap<String, Map<String, Integer>>();
         Map<String/*Method Name*/, Integer/*ParameterIndex*/> entityMap = new HashMap<String, Integer>();
         Map<String/*Method Name*/, Map<String/*Param Key*/, Integer/*ParameterIndex*/>> paramMap = new HashMap<String, Map<String, Integer>>();
+        Map<String/*Method Name*/, CacheEntryMeta> cacheMap = new HashMap<String, CacheEntryMeta>();
 
         for (Method m : methods) {
             String name = m.getName();
+
+            // method annotation 추출
+            for (Annotation a : m.getDeclaredAnnotations()) {
+                if (a instanceof Cache) {
+                    Cache c = (Cache) a;
+                    CacheEntryMeta e = new CacheEntryMeta();
+                    e.key(c.key());
+                    e.expireTime(c.expireTime());
+                    cacheMap.put(name, e);
+                }
+            }
+
+
+            // parameter annotation 추출
             Class<?>[] paramTypes = m.getParameterTypes();
             Annotation[][] annotationsList = m.getParameterAnnotations();
 
@@ -87,11 +108,11 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
     }
 
     private SimpleApiBean createApiBean(ApiHost host) {
-        ApiTemplate template = createWebServiceTemlpate();
+        ApiTemplate template = createAPiTemlpate();
         return new SimpleApiBean(template, host);
     }
 
-    private ApiTemplate createWebServiceTemlpate() {
+    private ApiTemplate createAPiTemlpate() {
         RestTemplate springTemplate = createSpringRestTemplate();
         return new ApiTemplate(springTemplate);
     }

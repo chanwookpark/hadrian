@@ -193,4 +193,24 @@ public class SampleApiSpecTests {
 
         mockServer.verify();
     }
+
+    @Test
+    public void testGetWithCache() throws Exception {
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(springTemplate);
+        mockServer.expect(requestTo("http://localhost:9090/sample/sample/1"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{\"id\":\"1\", \"text1\":\"value1\"}", MediaType.APPLICATION_JSON));
+
+        Sample1 r = spec.getWithCache("1");
+        assertNotNull(r);
+        assertEquals(1, r.getId());
+        assertEquals("value1", r.getText1());
+
+        mockServer.verify();
+
+        Sample1 cr = spec.getWithCache("1");
+        assertNotNull(cr);
+        assertEquals(1, cr.getId());
+        assertEquals("value1", cr.getText1());
+    }
 }

@@ -1,6 +1,6 @@
 package restclient.config;
 
-import restclient.model.ApiBean;
+import restclient.operation.ApiBean;
 import restclient.model.ApiHostMap;
 
 /**

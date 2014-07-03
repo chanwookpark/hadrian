@@ -1,6 +1,10 @@
-package restclient.model;
+package restclient.operation;
 
-import restclient.operation.ApiTemplate;
+import restclient.model.ApiHost;
+import restclient.model.ApiParam;
+import restclient.model.ApiSpecificationMeta;
+
+import java.util.Map;
 
 /**
  * Created by chanwook on 2014. 6. 19..
@@ -21,17 +25,17 @@ public class SimpleApiBean implements ApiBean {
     @Override
     public Object execute(ApiParam param) {
         param.host(host);
-        param.namedPathMap(apiSpecificationMeta.getNamedPathMap(param.getJavaMethodName()));
-        param.urlParameters(apiSpecificationMeta.getParameters(param.getJavaMethodName()));
+
+        Map<String, Integer> namedPathMap = apiSpecificationMeta.getNamedPathMap(param.getJavaMethodName());
+        param.namedPathMap(namedPathMap);
+
+        Map<String, Integer> parameterMap = apiSpecificationMeta.getParameters(param.getJavaMethodName());
+        param.urlParameters(parameterMap);
+
         resolveEntityBody(param);
-        resovleUrlParameter(param);
 
         Object result = template.execute(param);
         return result;
-    }
-
-    private void resovleUrlParameter(ApiParam param) {
-
     }
 
     private void resolveEntityBody(ApiParam param) {

@@ -1,4 +1,6 @@
-package restclient.model;
+package restclient.operation;
+
+import restclient.model.ApiParam;
 
 import java.io.Serializable;
 

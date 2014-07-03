@@ -6,12 +6,19 @@ import restclient.ApiConfigInitializingException;
 import restclient.model.ApiHost;
 import restclient.model.ApiParam;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by chanwook on 2014. 6. 27..
  */
 public class SpringSupportApiUrlBuilder implements ApiUrlBuilder {
+    private Map<Class<?>, UrlParameterMapper> paramTypeMapperMap = new HashMap<Class<?>, UrlParameterMapper>();
+
+    public SpringSupportApiUrlBuilder() {
+        paramTypeMapperMap.put(Map.class, new MapTypeSupportUrlParameterMapper());
+    }
+
     @Override
     public String build(ApiParam param) {
         if (!StringUtils.hasText(param.getUrl()) || param.getApiHost() == null) {
@@ -32,20 +39,28 @@ public class SpringSupportApiUrlBuilder implements ApiUrlBuilder {
         for (Map.Entry<String, Integer> e : urlParameters.entrySet()) {
             String k = e.getKey();
             Object v = param.getArguments()[e.getValue()];
-            if (v instanceof Map) {
-                putMapTypeParam((Map) v, uriBuilder);
-            } else {
-                uriBuilder.queryParam(k, v);
-            }
+
+            addQueryParam(uriBuilder, k, v);
         }
         return uriBuilder.build().toUriString();
     }
 
-    private void putMapTypeParam(Map map, UriComponentsBuilder uriBuilder) {
-        for (Object o : map.entrySet()) {
-            Map.Entry e = (Map.Entry) o;
-            uriBuilder.queryParam(String.valueOf(e.getKey()), e.getValue());
+    private void addQueryParam(UriComponentsBuilder uriBuilder, String k, Object v) {
+        for (Map.Entry<Class<?>, UrlParameterMapper> me : paramTypeMapperMap.entrySet()) {
+            if (v.getClass().isAssignableFrom(me.getKey().getClass())) {
+                me.getValue().mapping(v, uriBuilder);
+                return;
+            }
         }
+        // default
+        uriBuilder.queryParam(k, v);
+    }
 
+    public void setParamTypeMapper(Map<Class<?>, UrlParameterMapper> paramTypeMapper) {
+        this.paramTypeMapperMap = paramTypeMapper;
+    }
+
+    public Map<Class<?>, UrlParameterMapper> getParamTypeMapper() {
+        return paramTypeMapperMap;
     }
 }

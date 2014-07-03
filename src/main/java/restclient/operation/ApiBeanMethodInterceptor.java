@@ -7,7 +7,6 @@ import restclient.meta.http.DELETE;
 import restclient.meta.http.GET;
 import restclient.meta.http.POST;
 import restclient.meta.http.PUT;
-import restclient.model.ApiBean;
 import restclient.model.ApiParam;
 
 import java.lang.annotation.Annotation;

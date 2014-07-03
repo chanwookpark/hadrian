@@ -1,6 +1,7 @@
 package restclient.startup;
 
 import restclient.meta.API;
+import restclient.meta.Cache;
 import restclient.meta.http.*;
 
 import java.util.Map;
@@ -40,4 +41,7 @@ public interface SampleApiSpec {
     @DELETE(url = "/sample/{key}")
     void delete(@Path("key") int key);
 
+    @GET(url = "/sample/{path}")
+    @Cache(key = "api.cache.sample", expireTime = 600)
+    Sample1 getWithCache(@Path("path") String path);
 }
