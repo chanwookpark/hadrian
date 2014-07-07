@@ -22,7 +22,7 @@ public class SpecificationClassSupportApiConfigurationRegister implements ApiCon
 
     private final Logger logger = LoggerFactory.getLogger(SpecificationClassSupportApiConfigurationRegister.class);
 
-    private ApiBeanFactory ApiBeanFactory;
+    private ApiBeanFactory apiBeanFactory;
 
     private String basePackage;
 
@@ -61,7 +61,7 @@ public class SpecificationClassSupportApiConfigurationRegister implements ApiCon
             if (!isExistBean(beanFactory, bd)) {
                 Class<?> spec = loadApiSpecClass(beanFactory, bd);
                 String beanName = bd.getBeanClassName();
-                ApiBean bean = ApiBeanFactory.createBean(spec, apiHostMap);
+                ApiBean bean = apiBeanFactory.createBean(spec, apiHostMap);
 
                 if (logger.isDebugEnabled()) {
                     logger.debug("[API Bean] bean name: " + beanName + ", class: " + bean);
@@ -86,7 +86,7 @@ public class SpecificationClassSupportApiConfigurationRegister implements ApiCon
     }
 
     public void setApiBeanFactory(ApiBeanFactory apiBeanFactory) {
-        this.ApiBeanFactory = apiBeanFactory;
+        this.apiBeanFactory = apiBeanFactory;
     }
 
     public void setBasePackage(String basePackage) {

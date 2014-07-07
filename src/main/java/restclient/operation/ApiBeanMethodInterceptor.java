@@ -35,7 +35,6 @@ public class ApiBeanMethodInterceptor implements MethodInterceptor {
             param.returnType(invocation.getMethod().getReturnType());
 
             Object response = bean.execute(param);
-
             return response;
         }
 

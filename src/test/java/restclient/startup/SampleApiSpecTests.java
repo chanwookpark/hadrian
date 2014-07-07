@@ -212,5 +212,7 @@ public class SampleApiSpecTests {
         assertNotNull(cr);
         assertEquals(1, cr.getId());
         assertEquals("value1", cr.getText1());
+
+        // 안 가면 통과로 봐도 되나? 보강은 어떻게 해야 하나..
     }
 }

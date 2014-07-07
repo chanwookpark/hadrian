@@ -38,8 +38,7 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
 
         SimpleApiBean target = createApiBean(host);
 
-        ApiSpecificationMeta specMeta = createApiSpecMeta(spec);
-        target.setApiSpecificationMeta(specMeta);
+        target.setApiSpecificationMeta(createApiSpecMeta(spec));
 
         ProxyFactory proxy = new ProxyFactory();
         proxy.setTarget(target);
@@ -75,7 +74,6 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
                 }
             }
 
-
             // parameter annotation 추출
             Class<?>[] paramTypes = m.getParameterTypes();
             Annotation[][] annotationsList = m.getParameterAnnotations();
@@ -105,6 +103,7 @@ public class ProxySupportApiBeanFactory implements ApiBeanFactory {
         meta.setNamedPathMap(namedPathMap);
         meta.setEntityMap(entityMap);
         meta.setParamMap(paramMap);
+        meta.setCacheMap(cacheMap);
     }
 
     private SimpleApiBean createApiBean(ApiHost host) {

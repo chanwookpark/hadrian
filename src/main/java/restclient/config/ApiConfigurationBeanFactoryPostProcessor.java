@@ -14,7 +14,6 @@ public class ApiConfigurationBeanFactoryPostProcessor implements BeanFactoryPost
 
     private final Logger logger = LoggerFactory.getLogger(ApiConfigurationBeanFactoryPostProcessor.class);
 
-
     private ApiHostMapFactory hostMapFactory;
 
     private ApiConfigurationRegister apiConfigurationRegister = new SpecificationClassSupportApiConfigurationRegister();
