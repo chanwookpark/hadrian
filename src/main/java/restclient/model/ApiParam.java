@@ -96,4 +96,5 @@ public class ApiParam implements Serializable {
     public Map<String, Integer> getUrlParameters() {
         return urlParameters;
     }
+
 }

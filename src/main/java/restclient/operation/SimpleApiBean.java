@@ -37,34 +37,19 @@ public class SimpleApiBean implements ApiBean {
         Map<String, Integer> parameterMap = apiSpecificationMeta.getParameters(param.getJavaMethodName());
         param.urlParameters(parameterMap);
 
-        //FIXME 별도로 뽑아내도록 리팩터링 하기..
-        // cachemeta가 있으면 cachewrapper를 생성해서 이걸 통해서 처리하도록 하면 되는가?
-        CacheEntryMeta cacheMeta = apiSpecificationMeta.getCache(param.getJavaMethodName());
-        if (isCacheSupport(cacheMeta)) {
-
-            String cacheKey = cacheMeta.getKey();
-            int cacheRowKey = getCacheRowKey(param);
-
-            Object cachedValue = apiCache.get(cacheKey, String.valueOf(cacheRowKey));
-            if (cachedValue != null) {
-                return cachedValue;
-            }
-        }
-
         resolveEntityBody(param);
 
-        Object result = template.execute(param);
-        if (result != null && isCacheSupport(cacheMeta)) {
-            String cacheKey = cacheMeta.getKey();
-            int cacheRowKey = getCacheRowKey(param);
-
-            apiCache.put(cacheKey, String.valueOf(cacheRowKey), result);
+        CacheEntryMeta cacheMeta = apiSpecificationMeta.getCache(param.getJavaMethodName());
+        Object result = null;
+        if (isCacheSupport(cacheMeta)) {
+            CacheSupportApiTemplate cachedApiTemplate =
+                    new CacheSupportApiTemplate(apiCache, cacheKeyGenerator, template, cacheMeta);
+            result = cachedApiTemplate.execute(param);
+        } else {
+            result = template.execute(param);
         }
         return result;
-    }
 
-    private int getCacheRowKey(ApiParam param) {
-        return cacheKeyGenerator.getCacheKey(param.getClass(), param.getJavaMethodName(), param.getArguments());
     }
 
     private boolean isCacheSupport(CacheEntryMeta cacheMeta) {
@@ -95,5 +80,13 @@ public class SimpleApiBean implements ApiBean {
 
     public ApiSpecificationMeta getApiSpecificationMeta() {
         return apiSpecificationMeta;
+    }
+
+    public void setApiCache(ApiCache apiCache) {
+        this.apiCache = apiCache;
+    }
+
+    public void setCacheKeyGenerator(CacheKeyGenerator cacheKeyGenerator) {
+        this.cacheKeyGenerator = cacheKeyGenerator;
     }
 }
