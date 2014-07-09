@@ -10,17 +10,15 @@ public class CacheSupportApiTemplate {
 
     private final ApiCache apiCache;
     private final CacheKeyGenerator cacheKeyGenerator;
-    private final CacheEntryMeta cacheMeta;
     private final ApiTemplate template;
 
-    public CacheSupportApiTemplate(ApiCache apiCache, CacheKeyGenerator cacheKeyGenerator, ApiTemplate template, CacheEntryMeta cacheMeta) {
+    public CacheSupportApiTemplate(ApiCache apiCache, CacheKeyGenerator cacheKeyGenerator, ApiTemplate template) {
         this.apiCache = apiCache;
         this.cacheKeyGenerator = cacheKeyGenerator;
         this.template = template;
-        this.cacheMeta = cacheMeta;
     }
 
-    public Object execute(ApiParam param) {
+    public Object execute(ApiParam param, CacheEntryMeta cacheMeta) {
         if (cacheMeta != null) {
             String cacheKey = cacheMeta.getKey();
             int cacheRowKey = getCacheRowKey(param);

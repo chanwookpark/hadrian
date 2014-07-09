@@ -22,9 +22,13 @@ public class SimpleApiBean implements ApiBean {
 
     private CacheKeyGenerator cacheKeyGenerator = new HashSupportCacheKeyGenerator();
 
+    CacheSupportApiTemplate cachedApiTemplate;
+
     public SimpleApiBean(ApiTemplate template, ApiHost host) {
         this.template = template;
         this.host = host;
+
+        cachedApiTemplate = new CacheSupportApiTemplate(apiCache, cacheKeyGenerator, template);
     }
 
     @Override
@@ -41,19 +45,13 @@ public class SimpleApiBean implements ApiBean {
 
         CacheEntryMeta cacheMeta = apiSpecificationMeta.getCache(param.getJavaMethodName());
         Object result = null;
-        if (isCacheSupport(cacheMeta)) {
-            CacheSupportApiTemplate cachedApiTemplate =
-                    new CacheSupportApiTemplate(apiCache, cacheKeyGenerator, template, cacheMeta);
-            result = cachedApiTemplate.execute(param);
+        if (cacheMeta != null) {
+            result = cachedApiTemplate.execute(param, cacheMeta);
         } else {
             result = template.execute(param);
         }
         return result;
 
-    }
-
-    private boolean isCacheSupport(CacheEntryMeta cacheMeta) {
-        return apiCache != null && cacheKeyGenerator != null && cacheMeta != null;
     }
 
     private void resolveEntityBody(ApiParam param) {

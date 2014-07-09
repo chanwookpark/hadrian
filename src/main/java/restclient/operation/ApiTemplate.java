@@ -20,7 +20,7 @@ public class ApiTemplate {
 
     private RestTemplate springTemplate;
 
-    private ApiUrlBuilder urlBuilder = new SpringSupportApiUrlBuilder();
+    private ApiUrlBuilder urlBuilder = new SimpleSupportApiUrlBuilder();
 
     public Object execute(ApiParam param) {
         String apiUrl = urlBuilder.build(param);

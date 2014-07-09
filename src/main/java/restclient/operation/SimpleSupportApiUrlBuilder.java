@@ -12,10 +12,10 @@ import java.util.Map;
 /**
  * Created by chanwook on 2014. 6. 27..
  */
-public class SpringSupportApiUrlBuilder implements ApiUrlBuilder {
+public class SimpleSupportApiUrlBuilder implements ApiUrlBuilder {
     private Map<Class<?>, UrlParameterMapper> paramTypeMapperMap = new HashMap<Class<?>, UrlParameterMapper>();
 
-    public SpringSupportApiUrlBuilder() {
+    public SimpleSupportApiUrlBuilder() {
         paramTypeMapperMap.put(Map.class, new MapTypeSupportUrlParameterMapper());
     }
 
@@ -25,6 +25,7 @@ public class SpringSupportApiUrlBuilder implements ApiUrlBuilder {
             throw new ApiConfigInitializingException("API URL 정보가 잘 못됐습니다!!");
         }
 
+        // URL mapping
         ApiHost apiHost = param.getApiHost();
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance();
         uriBuilder
@@ -34,7 +35,7 @@ public class SpringSupportApiUrlBuilder implements ApiUrlBuilder {
                 .path(apiHost.getContextRoot())
                 .path(param.getUrl());
 
-        // parameter
+        // parameter mapping
         Map<String, Integer> urlParameters = param.getUrlParameters();
         for (Map.Entry<String, Integer> e : urlParameters.entrySet()) {
             String k = e.getKey();
@@ -47,7 +48,7 @@ public class SpringSupportApiUrlBuilder implements ApiUrlBuilder {
 
     private void addQueryParam(UriComponentsBuilder uriBuilder, String k, Object v) {
         for (Map.Entry<Class<?>, UrlParameterMapper> me : paramTypeMapperMap.entrySet()) {
-            if (v.getClass().isAssignableFrom(me.getKey().getClass())) {
+            if (me.getKey().isAssignableFrom(v.getClass())) {
                 me.getValue().mapping(v, uriBuilder);
                 return;
             }
