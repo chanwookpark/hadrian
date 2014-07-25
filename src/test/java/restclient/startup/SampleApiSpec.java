@@ -80,7 +80,7 @@ public interface SampleApiSpec {
     void save(@Body Sample1 s);
 
     /**
-     * PUT 요청 예제
+     * PUT+Reuqest Body 요청 예제
      *
      * @param s
      */
@@ -95,7 +95,7 @@ public interface SampleApiSpec {
     void delete(@Path("key") int key);
 
     /**
-     * Cache 지원 예제 
+     * Cache 지원 예제
      *
      * @param path
      * @return
