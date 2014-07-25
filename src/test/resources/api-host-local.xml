@@ -2,4 +2,5 @@
 <apiHostMap>
     <apiHost key="sample" host="localhost" port="9090" contextRoot="sample"/>
     <apiHost key="test" host="localhost" port="9090" contextRoot="test"/>
+    <apiHost key="canonicalapi" host="localhost" port="9090" contextRoot="test" />
 </apiHostMap>
