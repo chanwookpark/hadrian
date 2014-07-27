@@ -1,17 +1,19 @@
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.7
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 group = "coreasset"
+version = "1.0"
 
 jar {
     baseName = "hadrian"
-    version = "1.0.SNAPSHOT"
 }
 
 dependencies {
@@ -31,6 +33,7 @@ dependencies {
     compile 'org.slf4j:slf4j-log4j12:1.7.7'
     compile 'log4j:log4j:1.2.17'
     compile 'org.slf4j:jcl-over-slf4j:1.7.7'
+
     //JSON
     compile 'com.fasterxml.jackson.core:jackson-core:2.4.0'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.4.0'
