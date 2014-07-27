@@ -13,13 +13,16 @@ public class ApiHost implements Serializable {
     private String key;
 
     @XStreamAsAttribute
-    private String host;
+    private String host = "";
 
     @XStreamAsAttribute
-    private int port;
+    private int port = 80;
 
     @XStreamAsAttribute
     private String contextRoot;
+
+    @XStreamAsAttribute
+    private String ssl;
 
     public ApiHost() {
     }
@@ -61,6 +64,14 @@ public class ApiHost implements Serializable {
 
     public void setContextRoot(String contextRoot) {
         this.contextRoot = contextRoot;
+    }
+
+    public String getSsl() {
+        return ssl;
+    }
+
+    public void setSsl(String ssl) {
+        this.ssl = ssl;
     }
 
     public String getHostUrl() {

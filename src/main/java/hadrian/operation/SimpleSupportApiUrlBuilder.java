@@ -1,10 +1,10 @@
 package hadrian.operation;
 
-import org.springframework.util.StringUtils;
-import org.springframework.web.util.UriComponentsBuilder;
 import hadrian.ApiConfigInitializingException;
 import hadrian.model.ApiHost;
 import hadrian.model.ApiParam;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +28,13 @@ public class SimpleSupportApiUrlBuilder implements ApiUrlBuilder {
         // URL mapping
         ApiHost apiHost = param.getApiHost();
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance();
+
+        bindingScheme(apiHost, uriBuilder);
+
+        bindingPort(apiHost, uriBuilder);
+
         uriBuilder
-                .scheme("http")
                 .host(apiHost.getHost())
-                .port(apiHost.getPort())
                 .path(apiHost.getContextRoot())
                 .path(param.getUrl());
 
@@ -44,6 +47,21 @@ public class SimpleSupportApiUrlBuilder implements ApiUrlBuilder {
             addQueryParam(uriBuilder, k, v);
         }
         return uriBuilder.build().toUriString();
+    }
+
+    private void bindingPort(ApiHost apiHost, UriComponentsBuilder uriBuilder) {
+        if (apiHost.getPort() > 0) {
+            uriBuilder.port(apiHost.getPort());
+        }
+    }
+
+    private void bindingScheme(ApiHost apiHost, UriComponentsBuilder uriBuilder) {
+        String ssl = apiHost.getSsl().toLowerCase();
+        if ("on".equals(ssl) || "yes".equals(ssl)) {
+            uriBuilder.scheme("https");
+        } else {
+            uriBuilder.scheme("http");
+        }
     }
 
     private void addQueryParam(UriComponentsBuilder uriBuilder, String k, Object v) {
