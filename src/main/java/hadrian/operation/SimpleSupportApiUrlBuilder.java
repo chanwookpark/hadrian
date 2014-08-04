@@ -56,12 +56,15 @@ public class SimpleSupportApiUrlBuilder implements ApiUrlBuilder {
     }
 
     private void bindingScheme(ApiHost apiHost, UriComponentsBuilder uriBuilder) {
-        String ssl = apiHost.getSsl().toLowerCase();
-        if ("on".equals(ssl) || "yes".equals(ssl)) {
+        if (StringUtils.hasText(apiHost.getSsl()) && isSslSupportOption(apiHost)) {
             uriBuilder.scheme("https");
         } else {
             uriBuilder.scheme("http");
         }
+    }
+
+    private boolean isSslSupportOption(ApiHost apiHost) {
+        return "on".equals(apiHost.getSsl().toLowerCase()) || "yes".equals(apiHost.getSsl().toLowerCase());
     }
 
     private void addQueryParam(UriComponentsBuilder uriBuilder, String k, Object v) {

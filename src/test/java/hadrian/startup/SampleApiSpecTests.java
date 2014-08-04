@@ -1,5 +1,6 @@
 package hadrian.startup;
 
+import hadrian.TestAppConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * Created by chanwook on 2014. 6. 18..
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SampleAppConfig.class})
+@ContextConfiguration(classes = {TestAppConfig.class})
 //@ActiveProfiles(profiles = {"local"})
 public class SampleApiSpecTests {
 

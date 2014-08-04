@@ -29,7 +29,7 @@ public class ApiTemplate {
         Class<?> returnType = resolveRetunType(param);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("===============================================================================" +
+            logger.debug("\n===============================================================================" +
                 "\nAPI 호출 상세 정보 [URL: " + apiUrl +
                     ", method: " + param.getMethod().name() +
                     ", arguments: " + param.getArguments() +
@@ -56,6 +56,9 @@ public class ApiTemplate {
 
     private HttpEntity createHttpEntity(ApiParam param) {
         HttpHeaders headers = new HttpHeaders();
+        //임시 하드코딩
+        headers.add("Accept", "application/vnd.github.v3+json");
+
         Object entity = param.getEntity();
         return new HttpEntity(entity, headers);
     }

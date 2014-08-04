@@ -20,7 +20,7 @@ public class XmlConifgurationApiHostMapFactoryTests {
         ApiHostMap map = f.loadHostMap();
 
         assertNotNull(map);
-        assertTrue(3 == map.getApiHostList().size());
+        assertTrue(4 == map.getApiHostList().size());
         // apiHost 1
         assertEquals("sample", map.getApiHostList().get(0).getKey());
         assertEquals("localhost", map.getApiHostList().get(0).getHost());

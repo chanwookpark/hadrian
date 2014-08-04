@@ -1,4 +1,4 @@
-package hadrian.startup;
+package hadrian;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,7 @@ import hadrian.config.XmlConfigurationApiHostMapFactory;
  * Created by chanwook on 2014. 6. 19..
  */
 @Configuration
-public class SampleAppConfig {
+public class TestAppConfig {
 
     @Bean
     public ApiConfigurationBeanFactoryPostProcessor getInitBeanFactoryProstProcessor() {

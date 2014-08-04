@@ -69,7 +69,7 @@ public interface SampleApiSpec {
      * @return
      */
     @GET(url = "/sample/{path1}")
-    Sample1 getWithMapParam(@Path("path1") String path, @Param("param1") Map<String, String> paramMap);
+    Sample1 getWithMapParam(@Path("path1") String path, @Param() Map<String, String> paramMap);
 
     /**
      * POST 요청 예제
